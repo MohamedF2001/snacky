@@ -5,6 +5,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import '../../../../const/app_colors.dart';
+
 class AllProductsPage extends ConsumerStatefulWidget {
   const AllProductsPage({super.key});
 
@@ -33,7 +35,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
         ),
       ),
       body: productState.isLoading
-          ? SpinKitThreeBounce(color: Colors.orange, size: 30.0)
+          ? SpinKitThreeBounce(color: AppColors.accentOrange, size: 30.0)
           : productState.error != null
           ? Center(child: Text("Erreur : ${productState.error!.toString()}"))
           : GridView.builder(
@@ -131,9 +133,10 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                               Chip(
                                 label: Text(
                                   "${product.prix.toStringAsFixed(2)} €",
-                                  style: const TextStyle(fontSize: 12),
+                                  style: const TextStyle(fontSize: 12,
+                                  color: Colors.black),
                                 ),
-                                backgroundColor: Colors.orange[100],
+                                backgroundColor: AppColors.chipPrice,
                                 visualDensity: VisualDensity.compact,
                                 materialTapTargetSize:
                                     MaterialTapTargetSize.shrinkWrap,
@@ -162,7 +165,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
               },
             ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.orange,
+        backgroundColor: AppColors.accentOrange,
         foregroundColor: Colors.black,
         onPressed: () {
           context.push('/products/create');

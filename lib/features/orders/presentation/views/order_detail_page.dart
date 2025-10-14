@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:snacky/const/app_colors.dart';
 import 'package:snacky/features/orders/domain/entities/order_entity.dart';
 import 'package:snacky/features/orders/presentation/providers/order_provider.dart';
 import 'package:snacky/features/products/domain/entities/product_entity.dart';
@@ -195,8 +196,8 @@ class _OrderDetailPageEnhancedState
               child: imageUrl != null && imageUrl.isNotEmpty
                   ? Image.network(
                 imageUrl,
-                width: 70,
-                height: 70,
+                width: 60,
+                height: 60,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return _buildPlaceholderImage();
@@ -204,8 +205,8 @@ class _OrderDetailPageEnhancedState
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Container(
-                    width: 70,
-                    height: 70,
+                    width: 60,
+                    height: 60,
                     color: Colors.grey[200],
                     child: Center(
                       child: CircularProgressIndicator(
@@ -281,14 +282,13 @@ class _OrderDetailPageEnhancedState
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.orange[100],
-                    borderRadius: BorderRadius.circular(20),
+                    //borderRadius: BorderRadius.circular(),
                   ),
                   child: Text(
-                    '${product.quantite}x',
+                    'x ${product.quantite}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.orange,
+                      color: Colors.black,
                       fontSize: 14,
                     ),
                   ),
@@ -299,7 +299,7 @@ class _OrderDetailPageEnhancedState
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 17,
-                    color: Colors.orange,
+                    color: Colors.black,
                   ),
                 ),
               ],
@@ -331,12 +331,12 @@ class _OrderDetailPageEnhancedState
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: _getStatusColor(statut),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         statut.toUpperCase(),
         style: const TextStyle(
-          color: Colors.white,
+          color: Colors.black,
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
@@ -350,7 +350,7 @@ class _OrderDetailPageEnhancedState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.orange, size: 24),
+          Icon(icon, color: Colors.grey, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -435,14 +435,14 @@ class _OrderDetailPageEnhancedState
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.edit,color: Colors.blue,),
+                  icon: const Icon(Icons.edit,color: AppColors.darkBlue,),
                   onPressed: () {
                     context.push('/orders/edit/${order.id}');
                   },
                   tooltip: 'Modifier',
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete,color: Colors.red,),
+                  icon: const Icon(Icons.delete,color: AppColors.primaryRed,),
                   onPressed: _showDeleteConfirmation,
                   tooltip: 'Supprimer',
                 ),
@@ -486,8 +486,11 @@ class _OrderDetailPageEnhancedState
                         onPressed: () =>
                             _updateStatus(order.id!, 'validé'),
                         icon: const Icon(Icons.check_circle),
-                        label: const Text('Valider la commande'),
+                        label: Text('Valider la commande',style: TextStyle(color: Colors.black),),
                         style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
                         ),
@@ -497,8 +500,11 @@ class _OrderDetailPageEnhancedState
                         onPressed: () =>
                             _updateStatus(order.id!, 'terminé'),
                         icon: const Icon(Icons.done_all),
-                        label: const Text('Marquer comme terminée'),
+                        label: const Text('Marquer comme terminée',style: TextStyle(color: Colors.black)),
                         style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,
                         ),
@@ -621,7 +627,7 @@ class _OrderDetailPageEnhancedState
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange,
+                        color: AppColors.neutralBlack,
                       ),
                     ),
                   ],

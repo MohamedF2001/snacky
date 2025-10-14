@@ -6,6 +6,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:snacky/features/orders/domain/entities/order_entity.dart';
 import 'package:snacky/features/orders/presentation/providers/order_provider.dart';
+import 'package:snacky/features/orders/presentation/widgets/info_client.dart';
+
+import '../../../../const/app_colors.dart';
 
 class OrderListPageWithFilters extends ConsumerStatefulWidget {
   const OrderListPageWithFilters({super.key});
@@ -388,7 +391,7 @@ class _OrderListPageWithFiltersState
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.black, width: 2),
+                  borderSide: const BorderSide(color: Colors.black, width: 1),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -459,9 +462,9 @@ class _OrderListPageWithFiltersState
           // Liste des commandes
           Expanded(
             child: orderState.isLoading
-                ? const Center(
+                ?  Center(
               child: SpinKitThreeBounce(
-                color: Colors.orange,
+                color: AppColors.accentOrange,
                 size: 30.0,
               ),
             )
@@ -542,7 +545,7 @@ class _OrderListPageWithFiltersState
                                 label: Text(
                                   order.statut.toUpperCase(),
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -560,51 +563,11 @@ class _OrderListPageWithFiltersState
                           const SizedBox(height: 12),
 
                           // Informations client
-                          Row(
-                            children: [
-                              const Icon(Icons.person,
-                                  size: 18, color: Colors.grey),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  order.nomClient,
-                                  style: const TextStyle(
-                                      fontSize: 16),
-                                ),
-                              ),
-                            ],
+                          InfoClient(
+                              nom: order.nomClient,
+                              telephone: order.telephone,
+                              nbrProduits: order.produits.length.toString()
                           ),
-                          const SizedBox(height: 8),
-
-                          Row(
-                            children: [
-                              const Icon(Icons.phone,
-                                  size: 18, color: Colors.grey),
-                              const SizedBox(width: 8),
-                              Text(
-                                order.telephone,
-                                style:
-                                const TextStyle(fontSize: 14),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-
-                          // Nombre de produits
-                          Row(
-                            children: [
-                              const Icon(Icons.shopping_bag,
-                                  size: 18, color: Colors.grey),
-                              const SizedBox(width: 8),
-                              Text(
-                                "${order.produits.length} produit(s)",
-                                style:
-                                const TextStyle(fontSize: 14),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-
                           // Type de commande
                           Row(
                             children: [
@@ -698,7 +661,6 @@ class _OrderListPageWithFiltersState
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.orange,
                                 ),
                               ),
                             ],

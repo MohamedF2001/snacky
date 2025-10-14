@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:snacky/features/promotions/presentation/providers/promotion_provider.dart';
 import 'package:snacky/features/promotions/domain/entities/promotion_entity.dart';
 
+import '../../../../const/app_colors.dart';
 import '../../../categories/presentation/widgets/succes_dialog.dart';
 
 class PromotionDetailPage extends ConsumerStatefulWidget {
@@ -51,15 +52,6 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
         if (next.success) {
           // Réinitialiser l'état
           ref.read(deletePromotionProvider.notifier).reset();
-
-          // Afficher un message de succès
-          /*ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Promotion supprimée avec succès"),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );*/
           showDialog(
             context: context,
             barrierDismissible: false, // empêche de fermer en cliquant dehors
@@ -106,7 +98,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
               children: [
                 // Bouton d'édition
                 IconButton(
-                  icon: const Icon(Icons.edit,color: Colors.blue,),
+                  icon: const Icon(Icons.edit,color: AppColors.darkBlue,),
                   onPressed: () {
                     context.push('/promotions/${widget.promotionId}/edit');
                   },
@@ -137,7 +129,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
       ),
       body: _isLoading
           ? const Center(
-        child: SpinKitThreeBounce(color: Colors.orange, size: 30.0),
+        child: SpinKitThreeBounce(color: AppColors.accentOrange, size: 30.0),
       )
           : _promotion == null
           ? Center(
@@ -191,10 +183,10 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
   // Card principale avec nom et tarif
   Widget _buildMainInfoCard() {
     return Card(
-      elevation: 4,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -206,7 +198,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                     color: Colors.orange.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.local_offer, size: 32, color: Colors.orange),
+                  child: const Icon(Icons.local_offer, size: 25, color: Colors.orange),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -225,7 +217,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                       Text(
                         _promotion!.nom,
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -237,7 +229,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
             const Divider(height: 32),
             Row(
               children: [
-                const Icon(Icons.euro, color: Colors.green, size: 28),
+                const Icon(Icons.euro, color: Colors.green, size: 25),
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,7 +246,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                     Text(
                       "${_promotion!.tarif.toStringAsFixed(2)} €",
                       style: const TextStyle(
-                        fontSize: 32,
+                        fontSize: 25,
                         fontWeight: FontWeight.bold,
                         color: Colors.green,
                       ),
@@ -272,7 +264,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
   // Card avec les dates
   Widget _buildDatesCard() {
     return Card(
-      elevation: 4,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -422,10 +414,10 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
         _promotion!.produits.first.nom.isNotEmpty;
 
     return Card(
-      elevation: 4,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -449,7 +441,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.purple.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     "${produitsIds.length} produit${produitsIds.length > 1 ? 's' : ''}",
@@ -517,7 +509,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         "${produit.prix.toStringAsFixed(2)} €",
@@ -594,7 +586,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
             label: const Text("Modifier"),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              backgroundColor: Color(0xFF1E3A8A),
+              backgroundColor: AppColors.darkBlue,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

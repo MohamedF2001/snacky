@@ -2,10 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snacky/const/app_colors.dart';
 import 'package:snacky/features/orders/domain/entities/order_entity.dart';
 import 'package:snacky/features/orders/presentation/providers/order_provider.dart';
 import 'package:snacky/features/products/domain/entities/product_entity.dart';
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
+
+import '../../../../const/app_input_style.dart';
 
 class OrderEditPage extends ConsumerStatefulWidget {
   final String orderId;
@@ -200,10 +203,13 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
       appBar: AppBar(
         title: const Text("Modifier la commande"),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _submit,
-            tooltip: 'Enregistrer',
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: _submit,
+              tooltip: 'Enregistrer',
+            ),
           ),
         ],
       ),
@@ -237,11 +243,9 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                             const SizedBox(height: 16),
                             TextFormField(
                               controller: _nomClientController,
-                              decoration: const InputDecoration(
-                                labelText: "Nom du client",
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.person),
-                              ),
+                              decoration: AppInputStyles.textFieldDecoration(
+                                icon: Icons.person,
+                                  label: "Nom du Client"),
                               validator: (val) => val == null || val.isEmpty
                                   ? "Nom requis"
                                   : null,
@@ -249,11 +253,9 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                             const SizedBox(height: 12),
                             TextFormField(
                               controller: _telephoneController,
-                              decoration: const InputDecoration(
-                                labelText: "Téléphone",
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.phone),
-                              ),
+                              decoration:AppInputStyles.textFieldDecoration(
+                                icon: Icons.phone,
+                                  label: "Téléphone"),
                               keyboardType: TextInputType.phone,
                               validator: (val) => val == null || val.isEmpty
                                   ? "Téléphone requis"
@@ -282,9 +284,9 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                             const SizedBox(height: 16),
                             DropdownButtonFormField<String>(
                               value: _statut,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.info),
+                              decoration: AppInputStyles.textFieldDecoration(
+                                icon: Icons.info,
+                                label: ""
                               ),
                               items: const [
                                 DropdownMenuItem(
@@ -331,6 +333,8 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                               ),
                             ),
                             SwitchListTile(
+                              inactiveThumbColor: Colors.grey,
+                              activeColor: AppColors.accentOrange,
                               title: const Text("Sur place"),
                               subtitle: const Text(
                                   "La commande est pour consommation sur place"),
@@ -346,10 +350,9 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                                 const EdgeInsets.symmetric(horizontal: 16),
                                 child: TextFormField(
                                   controller: _numeroTableController,
-                                  decoration: const InputDecoration(
-                                    labelText: "Numéro de table",
-                                    border: OutlineInputBorder(),
-                                    prefixIcon: Icon(Icons.table_restaurant),
+                                  decoration: AppInputStyles.textFieldDecoration(
+                                    icon: Icons.table_restaurant,
+                                      label: "Numéro de table"
                                   ),
                                   keyboardType: TextInputType.number,
                                 ),
@@ -389,11 +392,9 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                             ),
                             const SizedBox(height: 16),
                             DropdownButtonFormField<String>(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Ajouter un produit",
-                                prefixIcon: Icon(Icons.add_shopping_cart),
-                              ),
+                              decoration: AppInputStyles.textFieldDecoration(
+                                icon: Icons.add_shopping_cart,
+                                  label: "Ajouter un produit"),
                               items: produitsState.products.map((p) {
                                 return DropdownMenuItem(
                                   value: p.id!,
@@ -466,7 +467,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                                               vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: Colors.orange[100],
+                                              color: Colors.grey.shade300,
                                               borderRadius:
                                               BorderRadius.circular(
                                                   4),
@@ -525,7 +526,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.orange,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -545,7 +546,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                           style: TextStyle(fontSize: 16),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: AppColors.darkBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(

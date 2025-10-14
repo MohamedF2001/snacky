@@ -12,6 +12,7 @@ class AppColors {
   static const Color appBackground = Color(0xFFF8F9FA);
   static const Color cardBackground = Color(0xFFFFFFFF);
   static const Color navbarBackground = Color(0xFF1D3557);
+  static const Color iconNavBarColor = Color(0xFF1E3A8A);
 
   // ============ COULEURS DE TEXTE ============
   static const Color textPrimary = Color(0xFF2D3748);

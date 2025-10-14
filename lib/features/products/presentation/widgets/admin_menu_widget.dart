@@ -181,6 +181,7 @@ class AdminMenuWidget extends ConsumerWidget {
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snacky/const/app_colors.dart';
 import 'package:snacky/features/auth/presentation/providers/auth_provider.dart';
 
 class AdminMenuWidget extends ConsumerWidget {
@@ -219,7 +220,7 @@ class AdminMenuWidget extends ConsumerWidget {
 
     return Container(
       width: 220,
-      decoration: const BoxDecoration(color: Color(0xFF1E3A8A)),
+      decoration: BoxDecoration(color: AppColors.navbarBackground),
       child: Column(
         children: [
           // --- Header utilisateur ---
@@ -239,7 +240,7 @@ class AdminMenuWidget extends ConsumerWidget {
                 Text(
                   authState.user?.email ?? 'Admin',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textLight,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -297,7 +298,7 @@ class AdminMenuWidget extends ConsumerWidget {
                         Icon(
                           items[index]["icon"] as IconData,
                           color: active
-                              ? const Color(0xFF1E3A8A)
+                              ? AppColors.iconNavBarColor
                               : Colors.white,
                         ),
                         const SizedBox(width: 12),
@@ -307,7 +308,7 @@ class AdminMenuWidget extends ConsumerWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: active
-                                ? const Color(0xFF1E3A8A)
+                                ? AppColors.iconNavBarColor
                                 : Colors.white,
                           ),
                         ),
@@ -343,17 +344,17 @@ class AdminMenuWidget extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: Colors.red.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red),
+                  border: Border.all(color: AppColors.primaryRed),
                 ),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.logout, color: Colors.red, size: 20),
+                    Icon(Icons.logout, color: AppColors.primaryRed, size: 20),
                     SizedBox(width: 8),
                     Text(
                       'Déconnexion',
                       style: TextStyle(
-                        color: Colors.red,
+                        color:AppColors.primaryRed,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

@@ -1,180 +1,9 @@
-/*
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:snacky/const/app_style.dart';
-import 'package:snacky/features/products/presentation/providers/product_provider.dart';
-
-class DetailsProductPage extends ConsumerStatefulWidget {
-  final String produitId;
-  final String productNom;
-
-  const DetailsProductPage({super.key, required this.produitId,
-  required this.productNom});
-
-  @override
-  ConsumerState<DetailsProductPage> createState() => _DetailsProductPageState();
-}
-
-class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(detailProductNotifier(widget.produitId).notifier)
-          .getProductByIdUsecase
-          .execute(widget.produitId);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final productState = ref.watch(detailProductNotifier(widget.produitId));
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Détails de ${widget.productNom ?? ''}"),
-      ),
-      body: productState.isLoading
-          ? SpinKitThreeBounce(color: Colors.orange, size: 30.0)
-          : productState.error != null
-          ? Center(child: Text("Erreur : ${productState.error}"))
-          : Padding(
-              padding: const EdgeInsets.all(20),
-              child: Center(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(16),
-                            ),
-                            child: productState.product?.imageUrl != null
-                                ? Image.network(
-                                    productState.product!.imageUrl!,
-                                    height: 400, // taille fixe pour uniformité
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child; // image déjà chargée
-                                          }
-                                          // sinon, afficher le shimmer
-                                          return Shimmer.fromColors(
-                                            baseColor: Colors.grey[300]!,
-                                            highlightColor: Colors.grey[100]!,
-                                            child: Container(
-                                              height: 400,
-                                              width: double.infinity,
-                                              color: Colors.white,
-                                            ),
-                                          );
-                                        },
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                              height: 280,
-                                              width: double.infinity,
-                                              color: Colors.grey[300],
-                                              child: const Icon(
-                                                Icons.fastfood,
-                                                size: 40,
-                                              ),
-                                            ),
-                                  )
-                                : Container(
-                                    height: 280,
-                                    width: double.infinity,
-                                    color: Colors.grey[300],
-                                    child: const Icon(Icons.fastfood, size: 40),
-                                  ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: SizedBox(
-                              height: 400,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    productState.product?.nom ?? '',
-                                    style: TextStyle(
-                                      fontSize: AppStyle.titleFontSize,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Spacer(flex: 2),
-                                  Text(
-                                    productState.product?.description ?? '',
-                                    style: TextStyle(
-                                      fontSize: AppStyle.descriptionFontSize,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Chip(
-                                    labelPadding: AppStyle.chipPadding,
-                                    label: Text(
-                                      "${productState.product?.prix.toStringAsFixed(2)} €",
-                                      style: TextStyle(
-                                        fontSize: AppStyle.priceFontSize,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    backgroundColor: Colors.orange[100],
-                                    visualDensity: VisualDensity.compact,
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  Spacer(),
-                                  Container(
-                                    width: 200, // Largeur fixe pour le bouton
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.orange,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        "Ajouter au panier",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(flex: 1),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-    );
-  }
-}
-*/
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:snacky/const/app_colors.dart';
 import 'package:snacky/const/app_style.dart';
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
 
@@ -283,7 +112,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
               children: [
                 // Bouton Modifier dans l'AppBar
                 IconButton(
-                  icon: const Icon(Icons.edit,color: Colors.blue,),
+                  icon: const Icon(Icons.edit,color: AppColors.darkBlue,),
                   onPressed: () {
                     context.push('/products/edit/${widget.produitId}');
                   },
@@ -312,14 +141,14 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
         ),
       )
           : productState.isLoading
-          ? const SpinKitThreeBounce(color: Colors.orange, size: 30.0)
+          ? const SpinKitThreeBounce(color: AppColors.accentOrange, size: 30.0)
           : productState.error != null
           ? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_outline,
-                size: 64, color: Colors.red),
+                size: 64, color: AppColors.primaryRed),
             const SizedBox(height: 16),
             Text("Erreur : ${productState.error}"),
             const SizedBox(height: 16),
@@ -434,10 +263,11 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                                 style: TextStyle(
                                   fontSize:
                                   AppStyle.priceFontSize,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              backgroundColor: Colors.orange[100],
+                              backgroundColor: AppColors.chipPrice,
                               visualDensity:
                               VisualDensity.compact,
                               materialTapTargetSize:
@@ -463,7 +293,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                                     style:
                                     ElevatedButton.styleFrom(
                                       backgroundColor:
-                                      const Color(0xFF1E3A8A),
+                                      AppColors.darkBlue,
                                       foregroundColor:
                                       Colors.white,
                                       padding: const EdgeInsets
@@ -473,7 +303,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                                       RoundedRectangleBorder(
                                         borderRadius:
                                         BorderRadius.circular(
-                                            8),
+                                            12),
                                       ),
                                     ),
                                   ),
@@ -485,17 +315,17 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                                   child: OutlinedButton.icon(
                                     onPressed:
                                     _showDeleteConfirmation,
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
+                                    icon: Icon(Icons.delete,
+                                        color: AppColors.primaryRed),
                                     label: const Text(
                                       "Supprimer",
                                       style: TextStyle(
-                                          color: Colors.red),
+                                          color: AppColors.primaryRed),
                                     ),
                                     style:
                                     OutlinedButton.styleFrom(
                                       side: const BorderSide(
-                                          color: Colors.red),
+                                          color: AppColors.primaryRed),
                                       padding: const EdgeInsets
                                           .symmetric(
                                           vertical: 12),
@@ -503,7 +333,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                                       RoundedRectangleBorder(
                                         borderRadius:
                                         BorderRadius.circular(
-                                            8),
+                                            12),
                                       ),
                                     ),
                                   ),
