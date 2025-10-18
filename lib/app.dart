@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/main.dart';
 import 'package:snacky/features/auth/presentation/providers/auth_provider.dart';
 import 'package:snacky/features/auth/presentation/views/login_page.dart';
 import 'package:snacky/features/categories/presentation/views/categorie_list_page.dart';
 import 'package:snacky/features/categories/presentation/views/category_create_page.dart';
-import 'package:snacky/features/orders/presentation/views/order_list_page.dart';
 import 'package:snacky/features/products/presentation/views/admin_home_page.dart';
 import 'package:snacky/features/products/presentation/views/details_product_page.dart';
 import 'package:snacky/features/products/presentation/views/product_by_categorie_page.dart';
@@ -20,6 +20,7 @@ import 'features/orders/presentation/views/order_edit_page.dart';
 import 'features/orders/presentation/views/order_list_page_with_filters.dart';
 import 'features/promotions/presentation/views/create_promotion_page.dart';
 import 'features/promotions/presentation/views/promotion_detail_page.dart';
+import 'home.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -40,6 +41,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           // AdminHomePage contient ton Scaffold + Menu
         },
         routes: [
+          GoRoute(
+              path: '/home',
+              name: 'home',
+              builder: (context, state) => Home()
+          ),
           GoRoute(
             path: '/admin',
             name: 'dashboard',
@@ -186,7 +192,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoggingIn = state.matchedLocation == '/login';
 
       if (!isLoggedIn && !isLoggingIn) return '/login';
-      if (isLoggedIn && isLoggingIn) return '/admin';
+      if (isLoggedIn && isLoggingIn) return '/home';
       return null;
     },
   );

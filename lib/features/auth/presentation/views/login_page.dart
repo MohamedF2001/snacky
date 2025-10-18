@@ -40,7 +40,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         if (router.canPop()) {
           router.pop();
         } else {
-          router.go('/admin');
+          router.go('/home');
         }
       });
     }

@@ -82,20 +82,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
-  /*  Future<void> logout() async {
-    try {
-      await authRepository.logout();
-      // Réinitialiser l'état avec isInitializing à false
-      state = AuthState(isInitializing: false);
-      print('✅ User logged out successfully');
-    } catch (e) {
-      print('❌ Error during logout: $e');
-      // Même en cas d'erreur, réinitialiser avec isInitializing à false
-      state = AuthState(isInitializing: false);
-    }
-  } */
-  // features/auth/presentation/providers/auth_provider.dart
-
   Future<void> logout() async {
     try {
       print('🔒 Starting logout process...');
