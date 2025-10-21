@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:snacky/const/app_colors.dart';
+import 'package:snacky/core/utils/debug_product_info.dart';
 
 import 'features/categories/presentation/providers/categorie_provider.dart';
 import 'features/categories/presentation/widgets/category_cart.dart';
@@ -50,6 +51,7 @@ class _HomeState extends ConsumerState<Home> {
     final popularProducts = productState.products.take(5).toList();
 
     return Scaffold(
+      backgroundColor: AppColors.neutralGrey100,
       appBar: AppBar(),
       body: SingleChildScrollView(
         child: Column(
@@ -193,7 +195,7 @@ class _HomeState extends ConsumerState<Home> {
             // Liste horizontale des catégories
             if (categorieState.categories.isNotEmpty)
               SizedBox(
-                height: 200,
+                height: 180,
                 child: ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
@@ -216,17 +218,20 @@ class _HomeState extends ConsumerState<Home> {
 
                     final categorie = categorieState.categories[index];
 
-                    return CategoryCardTwo(
-                      id: categorie.id,
-                      name: categorie.nom,
-                      imagePath: "assets/images/f3.png",
-                      onTap: () {
-                        context.push(
-                          '/categories/${categorie.id}/products',
-                          extra: categorie.nom,
-                        );
-                      },
-                      onDelete: () {},
+                    return Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: CategoryCardTwo(
+                        id: categorie.id,
+                        name: categorie.nom,
+                        imagePath: "assets/images/categories/${categorie.description}.png",
+                        onTap: () {
+                          context.push(
+                            '/categories/${categorie.id}/products',
+                            extra: categorie.nom,
+                          );
+                        },
+                        onDelete: () {},
+                      ),
                     );
                   },
                 ),
@@ -252,9 +257,9 @@ class _HomeState extends ConsumerState<Home> {
                     icon: const Icon(Icons.more_vert),
                     onSelected: (String value) {
                       if (value == 'voir_plus') {
-                        context.push('/products');
+                        context.go('/products');
                       } else if (value == 'ajouter') {
-                        context.push('/products/create');
+                        context.go('/products/create');
                       }
                     },
                     itemBuilder: (BuildContext context) => [
@@ -364,7 +369,7 @@ class _HomeState extends ConsumerState<Home> {
             // Liste horizontale des produits populaires (limité à 5)
             if (popularProducts.isNotEmpty)
               SizedBox(
-                height: 250,
+                height: 230,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -384,7 +389,7 @@ class _HomeState extends ConsumerState<Home> {
                         },
                         borderRadius: BorderRadius.circular(16),
                         child: Card(
-                          elevation: 0.5,
+                          elevation: 0.2,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -402,7 +407,7 @@ class _HomeState extends ConsumerState<Home> {
                                   product.imageUrl!,
                                   height: 120,
                                   width: double.infinity,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                   loadingBuilder:
                                       (context, child, loadingProgress) {
                                     if (loadingProgress == null) {

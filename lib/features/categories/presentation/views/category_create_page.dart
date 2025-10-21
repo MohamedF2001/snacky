@@ -43,14 +43,14 @@ class _CategoryCreatePageState extends ConsumerState<CategoryCreatePage> {
                 children: [
                   TextFormField(
                     controller: _nomController,
-                    decoration: AppInputStyles.textFieldDecoration(label: "Description"),
+                    decoration: AppInputStyles.textFieldDecoration(label: "Nom"),
                     validator: (value) =>
                         value == null || value.isEmpty ? "Champ requis" : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _descriptionController,
-                    decoration: AppInputStyles.textFieldDecoration(label: "Nom"),
+                    decoration: AppInputStyles.textFieldDecoration(label: "Description"),
                     maxLines: 5,
                     validator: (value) =>
                         value == null || value.isEmpty ? "Champ requis" : null,

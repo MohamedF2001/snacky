@@ -131,7 +131,7 @@ class CategoryCardTwo extends StatelessWidget {
     required this.onTap,
     required this.onDelete,
     this.isDeleting = false,
-    this.backgroundColor = const Color(0xAEFFE0B2), // Colors.orange[100]
+    this.backgroundColor = const Color(0x5CFFE0B2), // Colors.orange[100]
   });
 
   @override
@@ -139,6 +139,8 @@ class CategoryCardTwo extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        width: 150,
+        height: 60,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
@@ -192,8 +194,8 @@ class CategoryCardTwo extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Image.network(
           path,
-          width: 120,
-          height: 120,
+          width: 60,
+          height: 60,
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) {
@@ -202,12 +204,12 @@ class CategoryCardTwo extends StatelessWidget {
             return Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
-              child: Container(width: 120, height: 120, color: Colors.white),
+              child: Container(width: 60, height: 60, color: Colors.white),
             );
           },
           errorBuilder: (context, error, stackTrace) => Container(
-            width: 120,
-            height: 120,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               color: Colors.grey[300],
               borderRadius: BorderRadius.circular(16),
@@ -220,7 +222,7 @@ class CategoryCardTwo extends StatelessWidget {
       // Image locale => pas besoin de shimmer
       return ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Image.asset(path, width: 120, height: 120, fit: BoxFit.cover),
+        child: Image.asset(path, width: 60, height: 60, fit: BoxFit.cover),
       );
     }
   }

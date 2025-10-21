@@ -206,7 +206,7 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
         return CategoryCard(
           id: categorie.id,
           name: categorie.nom,
-          imagePath: "assets/images/f3.png",
+          imagePath: "assets/images/categories/${categorie.description}.png",
           onTap: () {
             context.push(
               '/categories/${categorie.id}/products',

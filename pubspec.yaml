@@ -47,6 +47,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/categories/
     - assets/images/f1.png
     - assets/images/f2.png
     - assets/images/f3.png

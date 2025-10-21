@@ -60,7 +60,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    elevation: 3,
+                    elevation: 0.2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -75,7 +75,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                                   product.imageUrl!,
                                   height: 110, // taille fixe pour uniformité
                                   width: double.infinity,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                   loadingBuilder:
                                       (context, child, loadingProgress) {
                                         if (loadingProgress == null) {

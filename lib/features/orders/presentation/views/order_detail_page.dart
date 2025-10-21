@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -37,17 +38,51 @@ class _OrderDetailPageEnhancedState
   Color _getStatusColor(String statut) {
     switch (statut.toLowerCase()) {
       case 'en cours':
-        return Colors.orange;
+        return Colors.blue.shade100;
       case 'validé':
-        return Colors.blue;
+        return Colors.purple.shade100;
       case 'terminé':
       case 'terminee':
-        return Colors.green;
+        return Colors.green.shade100;
       case 'annulé':
       case 'annule':
-        return Colors.red;
+        return Colors.red.shade100;
       default:
-        return Colors.grey;
+        return Colors.grey.shade100;
+    }
+  }
+
+  Color _getStatusTextColor(String statut) {
+    switch (statut.toLowerCase()) {
+      case 'en cours':
+        return Colors.blue.shade700;
+      case 'validé':
+        return Colors.purple.shade700;
+      case 'terminé':
+      case 'terminee':
+        return Colors.green.shade700;
+      case 'annulé':
+      case 'annule':
+        return Colors.red.shade700;
+      default:
+        return Colors.grey.shade700;
+    }
+  }
+
+  String _getStatusLabel(String statut) {
+    switch (statut.toLowerCase()) {
+      case 'en cours':
+        return 'EN COURS';
+      case 'validé':
+        return 'VALIDÉ';
+      case 'terminé':
+      case 'terminee':
+        return 'TERMINÉ';
+      case 'annulé':
+      case 'annule':
+        return 'ANNULÉ';
+      default:
+        return statut.toUpperCase();
     }
   }
 
@@ -132,7 +167,6 @@ class _OrderDetailPageEnhancedState
     }
   }
 
-  // 🔥 MÉTHODE HELPER POUR EXTRAIRE LES INFOS PRODUIT
   Map<String, dynamic> _extractProductInfo(dynamic produit) {
     String name = 'Produit inconnu';
     double price = 0.0;
@@ -143,24 +177,17 @@ class _OrderDetailPageEnhancedState
         return {'name': name, 'price': price, 'imageUrl': imageUrl};
       }
 
-      // Si c'est une ProductEntity
       if (produit is ProductEntity) {
         name = produit.nom;
         price = produit.prix ?? 0.0;
         imageUrl = produit.imageUrl;
-      }
-      // Si c'est un Map (objet JSON)
-      else if (produit is Map) {
+      } else if (produit is Map) {
         name = produit['nom']?.toString() ?? 'Produit inconnu';
         price = (produit['prix'] as num?)?.toDouble() ?? 0.0;
         imageUrl = produit['imageUrl']?.toString();
-      }
-      // Si c'est juste un String (ID)
-      else if (produit is String) {
+      } else if (produit is String) {
         name = 'Produit $produit';
-      }
-      // Autre cas (essayer d'accéder dynamiquement)
-      else {
+      } else {
         try {
           name = (produit as dynamic).nom ?? 'Produit inconnu';
           price = ((produit as dynamic).prix as num?)?.toDouble() ?? 0.0;
@@ -183,196 +210,234 @@ class _OrderDetailPageEnhancedState
     final String? imageUrl = info['imageUrl'];
     final double sousTotal = productPrice * product.quantite;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            // Image du produit
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: imageUrl != null && imageUrl.isNotEmpty
-                  ? Image.network(
-                imageUrl,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return _buildPlaceholderImage();
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    width: 60,
-                    height: 60,
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                            : null,
-                        strokeWidth: 2,
-                      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      child: Row(
+        children: [
+          // Image du produit
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: imageUrl != null && imageUrl.isNotEmpty
+                ? Image.network(
+              imageUrl,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildPlaceholderImage();
+              },
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  width: 60,
+                  height: 60,
+                  color: Colors.grey[200],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                          : null,
+                      strokeWidth: 2,
                     ),
-                  );
-                },
-              )
-                  : _buildPlaceholderImage(),
-            ),
-            const SizedBox(width: 16),
+                  ),
+                );
+              },
+            )
+                : _buildPlaceholderImage(),
+          ),
+          const SizedBox(width: 16),
 
-            // Informations du produit
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    productName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(Icons.attach_money,
-                          size: 16, color: Colors.grey[600]),
-                      Text(
-                        'Prix unitaire: ${productPrice.toStringAsFixed(2)} FCFA',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.shopping_cart,
-                          size: 16, color: Colors.grey[600]),
-                      Text(
-                        'Quantité: ${product.quantite}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // Prix total
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Informations du produit
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    //borderRadius: BorderRadius.circular(),
-                  ),
-                  child: Text(
-                    'x ${product.quantite}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
                 Text(
-                  '${sousTotal.toStringAsFixed(2)} FCFA',
+                  productName,
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(Icons.attach_money,
+                        size: 14, color: Colors.grey.shade600),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Prix unitaire: ${productPrice.toStringAsFixed(2)} FCFA',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.shopping_cart,
+                        size: 14, color: Colors.grey.shade600),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Quantité: ${product.quantite}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+
+          // Quantité et prix
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'x${product.quantite}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${sousTotal.toStringAsFixed(2)} FCFA',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildPlaceholderImage() {
     return Container(
-      width: 70,
-      height: 70,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: Colors.orange.shade100,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Icon(
         Icons.fastfood,
-        size: 35,
-        color: Colors.grey[400],
+        size: 30,
+        color: Colors.orange.shade400,
       ),
     );
   }
 
-  Widget _buildStatusChip(String statut) {
+  Widget _buildInfoCard({required String title, required Widget child}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      width: double.infinity,
       decoration: BoxDecoration(
-        color: _getStatusColor(statut),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: Text(
-        statut.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            child,
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: Colors.grey.shade600),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPriceRow(String label, double amount,
+      {bool isBold = false, bool isTotal = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, color: Colors.grey, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: isBold ? 18 : 15,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+              color: isTotal ? Colors.black : Colors.grey.shade700,
+            ),
+          ),
+          Text(
+            '${amount.toStringAsFixed(2)} FCFA',
+            style: TextStyle(
+              fontSize: isBold ? 20 : 15,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+              color: isTotal ? Colors.black : Colors.grey.shade800,
             ),
           ),
         ],
@@ -387,14 +452,24 @@ class _OrderDetailPageEnhancedState
 
     if (orderState.isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Détails de la commande')),
+        backgroundColor: Colors.grey.shade50,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text('Détails de la commande'),
+        ),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (orderState.error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Détails de la commande')),
+        backgroundColor: Colors.grey.shade50,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text('Détails de la commande'),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -420,255 +495,328 @@ class _OrderDetailPageEnhancedState
     final order = orderState.order;
     if (order == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Détails de la commande')),
+        backgroundColor: Colors.grey.shade50,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text('Détails de la commande'),
+        ),
         body: const Center(child: Text('Commande introuvable')),
       );
     }
 
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('Commande #${order.id?.substring(0, 8) ?? 'N/A'}'),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          'Commande #${order.id?.substring(0, 8) ?? 'N/A'}',
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 20),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit,color: AppColors.darkBlue,),
-                  onPressed: () {
-                    context.push('/orders/edit/${order.id}');
-                  },
-                  tooltip: 'Modifier',
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete,color: AppColors.primaryRed,),
-                  onPressed: _showDeleteConfirmation,
-                  tooltip: 'Supprimer',
-                ),
-              ],
-            ),
-          )
+          IconButton(
+            icon: const Icon(Icons.edit, color: AppColors.darkBlue),
+            onPressed: () {
+              context.push('/orders/edit/${order.id}');
+            },
+            tooltip: 'Modifier',
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete, color: AppColors.primaryRed),
+            onPressed: _showDeleteConfirmation,
+            tooltip: 'Supprimer',
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: updateStatusState.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Card Statut
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Statut',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+          : 
+         Padding(
+          padding: const EdgeInsets.all(24),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Colonne de gauche : Produits et total
+              Expanded(
+                flex: 2,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Card Produits commandés
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade200,
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        _buildStatusChip(order.statut),
-                      ],
-                    ),
-                    if (order.statut != 'terminé' &&
-                        order.statut != 'annulé')
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Text(
+                                'Produits commandés',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade800,
+                                ),
+                              ),
+                            ),
+                            const Divider(height: 1),
+                  
+                            // Liste des produits
+                            ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: order.produits.length,
+                              separatorBuilder: (context, index) =>
+                                  Divider(
+                                    height: 1,
+                                    color: Colors.grey.shade200,
+                                  ),
+                              itemBuilder: (context, index) {
+                                return _buildProductItem(
+                                    order.produits[index]);
+                              },
+                            ),
+                  
+                            const Divider(height: 1),
+                  
+                            // Section récapitulatif
+                            Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Column(
+                                children: [
+                                  const Divider(height: 24),
+                                  _buildPriceRow(
+                                    'Coût Total',
+                                    order.coutTotal,
+                                    isBold: true,
+                                    isTotal: true,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 16),
-                    if (order.statut == 'en cours')
-                      ElevatedButton.icon(
-                        onPressed: () =>
-                            _updateStatus(order.id!, 'validé'),
-                        icon: const Icon(Icons.check_circle),
-                        label: Text('Valider la commande',style: TextStyle(color: Colors.black),),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                  
+                      // Boutons d'action
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                // Imprimer la facture
+                              },
+                              icon: const Icon(Icons.print),
+                              label: const Text('Imprimer'),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
                           ),
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                // Envoyer par email
+                              },
+                              icon: const Icon(Icons.email_outlined),
+                              label: const Text('Envoyer'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 24),
+              // Colonne de droite : Informations client et statut
+              Expanded(
+                flex: 1,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Card Statut
+                      _buildInfoCard(
+                        title: 'Statut',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _getStatusColor(order.statut),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _getStatusLabel(order.statut),
+                                style: TextStyle(
+                                  color: _getStatusTextColor(order.statut),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            if (order.statut.toLowerCase() == 'en cours')
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: () =>
+                                      _updateStatus(order.id!, 'validé'),
+                                  icon: const Icon(Icons.check_circle),
+                                  label:
+                                  const Text('Valider la commande'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            if (order.statut.toLowerCase() == 'validé')
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: () =>
+                                      _updateStatus(order.id!, 'terminé'),
+                                  icon: const Icon(Icons.done_all),
+                                  label: const Text(
+                                      'Marquer comme terminée'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                    if (order.statut == 'validé')
-                      ElevatedButton.icon(
-                        onPressed: () =>
-                            _updateStatus(order.id!, 'terminé'),
-                        icon: const Icon(Icons.done_all),
-                        label: const Text('Marquer comme terminée',style: TextStyle(color: Colors.black)),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
+                      const SizedBox(height: 16),
+                  
+                      // Card Informations Client
+                      _buildInfoCard(
+                        title: 'Informations Client',
+                        child: Column(
+                          children: [
+                            _buildInfoRow(
+                              icon: Icons.person_outline,
+                              label: 'Nom du client',
+                              value: order.nomClient,
+                            ),
+                            const Divider(height: 24),
+                            _buildInfoRow(
+                              icon: Icons.phone_outlined,
+                              label: 'Téléphone',
+                              value: order.telephone,
+                            ),
+                          ],
                         ),
                       ),
-                  ],
+                      const SizedBox(height: 16),
+                  
+                      // Card Type de commande
+                      _buildInfoCard(
+                        title: 'Type de commande',
+                        child: Column(
+                          children: [
+                            if (order.surPlace)
+                              _buildInfoRow(
+                                icon: Icons.restaurant,
+                                label: 'Sur place',
+                                value: order.numeroTable != null
+                                    ? 'Table ${order.numeroTable}'
+                                    : 'Oui',
+                              ),
+                            if (order.surPlace && order.livraison)
+                              const Divider(height: 24),
+                            if (order.livraison)
+                              _buildInfoRow(
+                                icon: Icons.delivery_dining,
+                                label: 'Livraison',
+                                value: 'Oui',
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                  
+                      // Card Informations temporelles
+                      _buildInfoCard(
+                        title: 'Informations temporelles',
+                        child: Column(
+                          children: [
+                            _buildInfoRow(
+                              icon: Icons.calendar_today_outlined,
+                              label: 'Créée le',
+                              value: _formatDate(order.createdAt),
+                            ),
+                            const Divider(height: 24),
+                            _buildInfoRow(
+                              icon: Icons.update_outlined,
+                              label: 'Dernière mise à jour',
+                              value: _formatDate(order.updatedAt),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-
-            // Informations client
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Informations Client',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Divider(),
-                    _buildInfoRow(
-                      Icons.person,
-                      'Nom du client',
-                      order.nomClient,
-                    ),
-                    _buildInfoRow(
-                      Icons.phone,
-                      'Téléphone',
-                      order.telephone,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Type de commande
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Type de commande',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Divider(),
-                    if (order.surPlace)
-                      _buildInfoRow(
-                        Icons.restaurant,
-                        'Sur place',
-                        order.numeroTable != null
-                            ? 'Table ${order.numeroTable}'
-                            : 'Oui',
-                      ),
-                    if (order.livraison)
-                      _buildInfoRow(
-                        Icons.delivery_dining,
-                        'Livraison',
-                        'Oui',
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Liste des produits
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Produits commandés',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Divider(),
-                    ...order.produits.map(_buildProductItem),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Résumé financier
-            Card(
-              elevation: 4,
-              color: Colors.orange[50],
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Coût Total',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '${order.coutTotal.toStringAsFixed(2)} FCFA',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.neutralBlack,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Dates
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Informations temporelles',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Divider(),
-                    _buildInfoRow(
-                      Icons.calendar_today,
-                      'Créée le',
-                      _formatDate(order.createdAt),
-                    ),
-                    _buildInfoRow(
-                      Icons.update,
-                      'Dernière mise à jour',
-                      _formatDate(order.updatedAt),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      
     );
   }
 }
+
