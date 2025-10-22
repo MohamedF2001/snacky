@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:snacky/const/app_colors.dart';
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
 
 class ProductsByCategoryPage extends ConsumerStatefulWidget {
@@ -80,7 +81,7 @@ class _ProductsByCategoryPageState
                                 product.imageUrl!,
                                 height: 110, // taille fixe pour uniformité
                                 width: double.infinity,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 loadingBuilder:
                                     (context, child, loadingProgress) {
                                       if (loadingProgress == null) {
@@ -137,10 +138,10 @@ class _ProductsByCategoryPageState
                             ),
                             Chip(
                               label: Text(
-                                "${product.prix.toStringAsFixed(2)} €",
+                                "${product.prix.toStringAsFixed(2)} F CFA",
                                 style: const TextStyle(fontSize: 12),
                               ),
-                              backgroundColor: Colors.orange[100],
+                              backgroundColor: AppColors.chipPrice,
                               visualDensity: VisualDensity.compact,
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,

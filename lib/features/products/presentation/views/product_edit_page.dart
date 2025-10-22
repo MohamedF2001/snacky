@@ -155,7 +155,7 @@ class _ProductEditPageState extends ConsumerState<ProductEditPage> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: const Text("Modifier le produit")),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator(color: Colors.orange)),
       );
     }
 
@@ -317,7 +317,7 @@ class _ProductEditPageState extends ConsumerState<ProductEditPage> {
 
                     // Bouton soumettre
                     updateState.isLoading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const Center(child: CircularProgressIndicator(color: Colors.orange))
                         : SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
@@ -350,7 +350,7 @@ class _ProductEditPageState extends ConsumerState<ProductEditPage> {
 
   Widget _buildCategoryDropdown(CategorieListState categorieState) {
     if (categorieState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: Colors.orange));
     }
     if (categorieState.error != null) {
       return Card(

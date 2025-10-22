@@ -149,7 +149,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         const SizedBox(height: 24),
                         if (authState.isLoading)
-                          const CircularProgressIndicator()
+                          const Center(child: CircularProgressIndicator(color: Colors.orange))
                         else
                           ElevatedButton(
                             onPressed: () {

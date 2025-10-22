@@ -132,7 +132,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                               ),
                               Chip(
                                 label: Text(
-                                  "${product.prix.toStringAsFixed(2)} €",
+                                  "${product.prix.toStringAsFixed(2)} F CFA",
                                   style: const TextStyle(fontSize: 12,
                                   color: Colors.black),
                                 ),

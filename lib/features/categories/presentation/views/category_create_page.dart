@@ -78,7 +78,7 @@ class _CategoryCreatePageState extends ConsumerState<CategoryCreatePage> {
                           ? const SizedBox(
                               height: 20,
                               width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 3),
+                              child: Center(child: CircularProgressIndicator(color: Colors.orange)),
                             )
                           : const Text("Ajouter"),
                     ),

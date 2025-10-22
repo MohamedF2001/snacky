@@ -30,6 +30,7 @@ class AppColors {
 
   // ============ COULEURS DE CHIPS ============
   static const Color chipPrice = Color(0xFFF4A261);
+  static const Color chipPrice2 = Color(0x5CFFE0B2);
   static const Color chipPromotion = Color(0xFFE63946);
 
   // ============ STATUTS DES COMMANDES ============

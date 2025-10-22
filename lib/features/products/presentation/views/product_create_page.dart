@@ -256,7 +256,7 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
 
                     // Bouton soumettre
                     createState.isLoading
-                        ? const CircularProgressIndicator()
+                        ? const Center(child: CircularProgressIndicator(color: Colors.orange))
                         : SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -289,7 +289,7 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
     String? dropdownValue,
   ) {
     if (categorieState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: Colors.orange));
     }
     if (categorieState.error != null) {
       return Card(

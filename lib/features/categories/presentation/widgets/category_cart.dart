@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../../const/app_colors.dart';
+
 class CategoryCard extends StatelessWidget {
   final String id;
   final String name;
@@ -131,7 +133,8 @@ class CategoryCardTwo extends StatelessWidget {
     required this.onTap,
     required this.onDelete,
     this.isDeleting = false,
-    this.backgroundColor = const Color(0x5CFFE0B2), // Colors.orange[100]
+    //this.backgroundColor = const Color(0x5CFFE0B2), // Colors.orange[100]
+    this.backgroundColor = AppColors.accentOrange
   });
 
   @override

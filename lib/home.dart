@@ -52,17 +52,77 @@ class _HomeState extends ConsumerState<Home> {
 
     return Scaffold(
       backgroundColor: AppColors.neutralGrey100,
-      appBar: AppBar(),
+      appBar:AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Text(
+          'BIENVENUE',
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              icon: const Icon(Icons.notifications, color: AppColors.neutralBlack),
+              onPressed: (){},
+              tooltip: 'Notifications',
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             // Bannière bleue
-            Container(
-              color: Colors.blue,
-              width: double.infinity,
-              height: 100,
-              child: const Text("data"),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.accentOrange,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                width: double.infinity,
+                height: 250,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 🧠 Texte d'accroche
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 30),
+                        child: Text(
+                          "Gérez votre fast-food en toute simplicité 🍔",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // 🖼️ Illustration
+                    Padding(
+                      padding: const EdgeInsets.only(right: 0),
+                      child: Image.asset(
+                        'assets/images/fast.png',
+                        width: 550,
+                        height: 400,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
+
             const SizedBox(height: 20),
 
             // En-tête Catégorie et menu trois points sur la même ligne
@@ -194,46 +254,49 @@ class _HomeState extends ConsumerState<Home> {
 
             // Liste horizontale des catégories
             if (categorieState.categories.isNotEmpty)
-              SizedBox(
-                height: 180,
-                child: ListView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  itemCount:
-                      categorieState.categories.length +
-                      (categorieState.isLoading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    // Loader à la fin pendant le chargement
-                    if (index == categorieState.categories.length) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(
-                            color: Colors.orange,
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  height: 180,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    itemCount:
+                        categorieState.categories.length +
+                        (categorieState.isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      // Loader à la fin pendant le chargement
+                      if (index == categorieState.categories.length) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(
+                              color: Colors.orange,
+                            ),
                           ),
+                        );
+                      }
+
+                      final categorie = categorieState.categories[index];
+
+                      return Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: CategoryCardTwo(
+                          id: categorie.id,
+                          name: categorie.nom,
+                          imagePath: "assets/images/categories/${categorie.description}.png",
+                          onTap: () {
+                            context.push(
+                              '/categories/${categorie.id}/products',
+                              extra: categorie.nom,
+                            );
+                          },
+                          onDelete: () {},
                         ),
                       );
-                    }
-
-                    final categorie = categorieState.categories[index];
-
-                    return Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: CategoryCardTwo(
-                        id: categorie.id,
-                        name: categorie.nom,
-                        imagePath: "assets/images/categories/${categorie.description}.png",
-                        onTap: () {
-                          context.push(
-                            '/categories/${categorie.id}/products',
-                            extra: categorie.nom,
-                          );
-                        },
-                        onDelete: () {},
-                      ),
-                    );
-                  },
+                    },
+                  ),
                 ),
               ),
 
@@ -474,7 +537,7 @@ class _HomeState extends ConsumerState<Home> {
                                     const SizedBox(height: 8),
                                     Chip(
                                       label: Text(
-                                        "${product.prix.toStringAsFixed(2)} €",
+                                        "${product.prix.toStringAsFixed(2)} F CFA",
                                         style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,

@@ -32,7 +32,7 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
     final productState = ref.watch(productListNotifier);
 
     if (productState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: Colors.orange));
     }
 
     if (productState.error != null) {
@@ -340,10 +340,7 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                         ? const SizedBox(
                       height: 22,
                       width: 22,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
+                      child: Center(child: CircularProgressIndicator(color: Colors.orange)),
                     )
                         : const Text(
                       "Créer la promotion",

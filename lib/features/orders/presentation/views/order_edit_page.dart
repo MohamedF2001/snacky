@@ -1,5 +1,3 @@
-/*
-// features/orders/presentation/pages/order_edit_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -61,6 +59,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
         _livraison = order.livraison;
         _statut = order.statut;
 
+        // ✅ CORRECTION : Conversion explicite pour éviter IdentityMap
         _produitsCommandes = order.produits.map((p) {
           String produitId;
           if (p.produit is ProductEntity) {
@@ -71,7 +70,8 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
             produitId = p.produit.toString();
           }
 
-          return {
+          // Créer une nouvelle Map explicite
+          return <String, dynamic>{
             "produitId": produitId,
             "quantite": p.quantite,
           };
@@ -102,584 +102,9 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
     return total;
   }
 
+  // ✅ CORRECTION : Méthode corrigée pour éviter l'erreur IdentityMap
   void _ajouterProduit(String produitId) {
-    setState(() {
-      _produitsCommandes.add({
-        "produitId": produitId,
-        "quantite": 1,
-      });
-    });
-  }
-
-  void _changerQuantite(int index, int nouvelleQuantite) {
-    setState(() {
-      _produitsCommandes[index]["quantite"] = nouvelleQuantite;
-    });
-  }
-
-  void _supprimerProduit(int index) {
-    setState(() {
-      _produitsCommandes.removeAt(index);
-    });
-  }
-
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_produitsCommandes.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Veuillez ajouter au moins un produit."),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    final produits = _produitsCommandes
-        .map((item) => OrderProductEntity(
-      produit: item["produitId"],
-      quantite: item["quantite"],
-    ))
-        .toList();
-
-    final orderState = ref.read(detailOrderNotifier(widget.orderId));
-    final originalOrder = orderState.order!;
-
-    final updatedOrder = OrderEntity(
-      id: originalOrder.id,
-      client: originalOrder.client,
-      nomClient: _nomClientController.text.trim(),
-      telephone: _telephoneController.text.trim(),
-      produits: produits,
-      coutTotal: _coutTotal,
-      statut: _statut,
-      numeroTable: _surPlace && _numeroTableController.text.isNotEmpty
-          ? int.tryParse(_numeroTableController.text.trim())
-          : null,
-      surPlace: _surPlace,
-      livraison: _livraison,
-      createdAt: originalOrder.createdAt,
-      updatedAt: DateTime.now(),
-    );
-
-    // Appeler le use case de mise à jour
-    await ref.read(updateOrderProvider.notifier).updateOrder(updatedOrder);
-
-    final updateState = ref.read(updateOrderProvider);
-
-    if (mounted) {
-      if (updateState.error == null && updateState.order != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Commande mise à jour avec succès'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        // Rafraîchir la liste des commandes
-        ref.read(orderListNotifier.notifier).getOrders();
-        context.go('/orders/detail/${widget.orderId}');
-      } else if (updateState.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur: ${updateState.error}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final produitsState = ref.watch(productListNotifier);
-
-    if (_isLoading) {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Modifier la commande")),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Modifier la commande"),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: IconButton(
-              icon: const Icon(Icons.save),
-              onPressed: _submit,
-              tooltip: 'Enregistrer',
-            ),
-          ),
-        ],
-      ),
-      body: Center(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width > 800
-              ? MediaQuery.of(context).size.width / 2
-              : MediaQuery.of(context).size.width,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Informations client
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Informations Client",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: _nomClientController,
-                              decoration: AppInputStyles.textFieldDecoration(
-                                icon: Icons.person,
-                                  label: "Nom du Client"),
-                              validator: (val) => val == null || val.isEmpty
-                                  ? "Nom requis"
-                                  : null,
-                            ),
-                            const SizedBox(height: 12),
-                            TextFormField(
-                              controller: _telephoneController,
-                              decoration:AppInputStyles.textFieldDecoration(
-                                icon: Icons.phone,
-                                  label: "Téléphone"),
-                              keyboardType: TextInputType.phone,
-                              validator: (val) => val == null || val.isEmpty
-                                  ? "Téléphone requis"
-                                  : null,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Statut
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Statut de la commande",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<String>(
-                              value: _statut,
-                              decoration: AppInputStyles.textFieldDecoration(
-                                icon: Icons.info,
-                                label: ""
-                              ),
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 'en cours',
-                                  child: Text('En cours'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'validé',
-                                  child: Text('Validé'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'terminé',
-                                  child: Text('Terminé'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'annulé',
-                                  child: Text('Annulé'),
-                                ),
-                              ],
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() => _statut = value);
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Type de commande
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Type de commande",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SwitchListTile(
-                              inactiveThumbColor: Colors.grey,
-                              activeColor: AppColors.accentOrange,
-                              title: const Text("Sur place"),
-                              subtitle: const Text(
-                                  "La commande est pour consommation sur place"),
-                              value: _surPlace,
-                              onChanged: (val) => setState(() {
-                                _surPlace = val;
-                                if (val) _livraison = false;
-                              }),
-                            ),
-                            if (_surPlace)
-                              Padding(
-                                padding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                                child: TextFormField(
-                                  controller: _numeroTableController,
-                                  decoration: AppInputStyles.textFieldDecoration(
-                                    icon: Icons.table_restaurant,
-                                      label: "Numéro de table"
-                                  ),
-                                  keyboardType: TextInputType.number,
-                                ),
-                              ),
-                            const SizedBox(height: 8),
-                            SwitchListTile(
-                              title: const Text("Livraison"),
-                              subtitle: const Text(
-                                  "La commande sera livrée au client"),
-                              value: _livraison,
-                              onChanged: (val) => setState(() {
-                                _livraison = val;
-                                if (val) _surPlace = false;
-                              }),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Produits
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: produitsState.isLoading
-                            ? const Center(child: CircularProgressIndicator())
-                            : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Produits",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<String>(
-                              decoration: AppInputStyles.textFieldDecoration(
-                                icon: Icons.add_shopping_cart,
-                                  label: "Ajouter un produit"),
-                              items: produitsState.products.map((p) {
-                                return DropdownMenuItem(
-                                  value: p.id!,
-                                  child: Text(
-                                      "${p.nom} - ${p.prix} FCFA"),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                if (value != null) _ajouterProduit(value);
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                            if (_produitsCommandes.isEmpty)
-                              const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Text(
-                                    "Aucun produit ajouté",
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ),
-                              )
-                            else
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics:
-                                const NeverScrollableScrollPhysics(),
-                                itemCount: _produitsCommandes.length,
-                                itemBuilder: (context, index) {
-                                  final item = _produitsCommandes[index];
-                                  final produit = produitsState.products
-                                      .firstWhere(
-                                        (p) => p.id == item["produitId"],
-                                    orElse: () => ProductEntity(
-                                      id: item["produitId"],
-                                      nom: "Produit inconnu",
-                                      description: "",
-                                      prix: 0,
-                                      imageUrl: null,
-                                      categorie: null,
-                                    ),
-                                  );
-
-                                  return Card(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 6),
-                                    elevation: 2,
-                                    child: ListTile(
-                                      title: Text(produit.nom),
-                                      subtitle: Text(
-                                        "Prix: ${produit.prix} FCFA - Qté: ${item["quantite"]} - Total: ${(produit.prix ?? 0) * item["quantite"]} FCFA",
-                                      ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.remove,
-                                                size: 20),
-                                            onPressed: () {
-                                              if (item["quantite"] > 1) {
-                                                _changerQuantite(index,
-                                                    item["quantite"] - 1);
-                                              }
-                                            },
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets
-                                                .symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey.shade300,
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  4),
-                                            ),
-                                            child: Text(
-                                              '${item["quantite"]}',
-                                              style: const TextStyle(
-                                                fontWeight:
-                                                FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.add,
-                                                size: 20),
-                                            onPressed: () {
-                                              _changerQuantite(index,
-                                                  item["quantite"] + 1);
-                                            },
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete,
-                                                color: Colors.red),
-                                            onPressed: () =>
-                                                _supprimerProduit(index),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Coût total
-                    Card(
-                      color: Colors.orange[50],
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Coût total :",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "${_coutTotal.toStringAsFixed(2)} FCFA",
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Bouton d'enregistrement
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _submit,
-                        icon: const Icon(Icons.save),
-                        label: const Text(
-                          "Enregistrer les modifications",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.darkBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _nomClientController.dispose();
-    _telephoneController.dispose();
-    _numeroTableController.dispose();
-    super.dispose();
-  }
-}*/
-
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:snacky/const/app_colors.dart';
-import 'package:snacky/features/orders/domain/entities/order_entity.dart';
-import 'package:snacky/features/orders/presentation/providers/order_provider.dart';
-import 'package:snacky/features/products/domain/entities/product_entity.dart';
-import 'package:snacky/features/products/presentation/providers/product_provider.dart';
-
-class OrderEditPage extends ConsumerStatefulWidget {
-  final String orderId;
-
-  const OrderEditPage({super.key, required this.orderId});
-
-  @override
-  ConsumerState<OrderEditPage> createState() => _OrderEditPageState();
-}
-
-class _OrderEditPageState extends ConsumerState<OrderEditPage> {
-  final _formKey = GlobalKey<FormState>();
-
-  final _nomClientController = TextEditingController();
-  final _telephoneController = TextEditingController();
-  final _numeroTableController = TextEditingController();
-
-  bool _surPlace = false;
-  bool _livraison = false;
-  String _statut = 'en cours';
-
-  List<Map<String, dynamic>> _produitsCommandes = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadOrderData();
-      ref.read(productListNotifier.notifier).getProduits();
-    });
-  }
-
-  Future<void> _loadOrderData() async {
-    await ref
-        .read(detailOrderNotifier(widget.orderId).notifier)
-        .getOrderById(widget.orderId);
-
-    final orderState = ref.read(detailOrderNotifier(widget.orderId));
-
-    if (orderState.order != null) {
-      final order = orderState.order!;
-
-      setState(() {
-        _nomClientController.text = order.nomClient;
-        _telephoneController.text = order.telephone;
-        _numeroTableController.text = order.numeroTable?.toString() ?? '';
-        _surPlace = order.surPlace;
-        _livraison = order.livraison;
-        _statut = order.statut;
-
-        _produitsCommandes = order.produits.map((p) {
-          String produitId;
-          if (p.produit is ProductEntity) {
-            produitId = (p.produit as ProductEntity).id ?? '';
-          } else if (p.produit is String) {
-            produitId = p.produit;
-          } else {
-            produitId = p.produit.toString();
-          }
-
-          return {
-            "produitId": produitId,
-            "quantite": p.quantite,
-          };
-        }).toList();
-
-        _isLoading = false;
-      });
-    }
-  }
-
-  double get _coutTotal {
-    final produits = ref.watch(productListNotifier).products;
-    double total = 0;
-    for (var item in _produitsCommandes) {
-      final product = produits.firstWhere(
-            (p) => p.id == item["produitId"],
-        orElse: () => ProductEntity(
-          id: null,
-          nom: "Inconnu",
-          description: "",
-          prix: 0,
-          imageUrl: null,
-          categorie: null,
-        ),
-      );
-      total += (product.prix ?? 0) * item["quantite"];
-    }
-    return total;
-  }
-
-  void _ajouterProduit(String produitId) {
-    // 🔥 FIX: Vérifier si le produit existe déjà
+    // Vérifier si le produit existe déjà dans la commande
     final exists = _produitsCommandes.any((item) => item["produitId"] == produitId);
 
     if (exists) {
@@ -693,27 +118,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
       return;
     }
 
-    // ✅ Récupération du notifier
-    final updateNotifier = ref.read(updateOrderProvider.notifier);
-
-    // ✅ Création d’un objet ProductEntity à partir de ton produit
-    final produit = ProductEntity(
-      id: produitId,
-      nom: "Nom du produit", // <-- tu peux le récupérer via ton modèle
-      prix: 2000, description: '', // exemple, selon ta structure
-    );
-
-    // ✅ Ajout du produit via le provider
-    //updateNotifier.addProductToOrder(produit);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Produit ajouté à la commande"),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
-      ),
-    );
-
+    // ✅ CORRECTION : Créer une nouvelle Map explicite au lieu d'utiliser IdentityMap
     setState(() {
       _produitsCommandes.add({
         "produitId": produitId,
@@ -721,6 +126,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
       });
     });
 
+    // Afficher un message de confirmation
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("Produit ajouté avec succès"),
@@ -741,14 +147,44 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
     setState(() {
       _produitsCommandes.removeAt(index);
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Produit retiré de la commande"),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 
+  // ✅ FIX: Méthode submit optimisée
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
     if (_produitsCommandes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Veuillez ajouter au moins un produit."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (!_surPlace && !_livraison) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Veuillez choisir 'Sur place' ou 'Livraison'"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_surPlace && _numeroTableController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Veuillez entrer le numéro de table"),
           backgroundColor: Colors.red,
         ),
       );
@@ -795,14 +231,11 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
           ),
         );
 
-        // 🔥 FIX: Rafraîchir la liste ET les détails
+        // ✅ FIX: Rafraîchir la liste et naviguer immédiatement
         ref.read(orderListNotifier.notifier).getOrders();
-        await ref
-            .read(detailOrderNotifier(widget.orderId).notifier)
-            .getOrderById(widget.orderId);
 
+        // Navigation immédiate sans attendre le refresh des détails
         if (mounted) {
-          //context.push('/orders/detail/${widget.orderId}');
           context.go('/orders');
         }
       } else if (updateState.error != null) {
@@ -816,6 +249,22 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
     }
   }
 
+  Widget _buildPlaceholderImage() {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.orange.shade100,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(
+        Icons.fastfood,
+        size: 30,
+        color: Colors.orange.shade400,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final produitsState = ref.watch(productListNotifier);
@@ -827,7 +276,18 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          title: const Text("Modifier la commande"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text(
+            "Modifier la commande",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
         ),
         body: const Center(child: CircularProgressIndicator(color: Colors.orange)),
       );
@@ -880,45 +340,46 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
           ],
         ),
       )
-          : SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Colonne de gauche
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      _buildClientCard(),
-                      const SizedBox(height: 16),
-                      _buildStatutCard(),
-                      const SizedBox(height: 16),
-                      _buildTypeCommandeCard(),
-                    ],
+          : Padding(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Colonne de gauche
+                  Expanded(
+                    flex: 2,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _buildProduitsCard(produitsState),
+                          const SizedBox(height: 16),
+                          _buildCoutTotalCard(),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 24),
-
-                // Colonne de droite
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: [
-                      _buildProduitsCard(produitsState),
-                      const SizedBox(height: 16),
-                      _buildCoutTotalCard(),
-                    ],
+                  const SizedBox(width: 24),
+                  // Colonne de droite
+                  Expanded(
+                    flex: 1,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _buildClientCard(),
+                          const SizedBox(height: 16),
+                          _buildStatutCard(),
+                          const SizedBox(height: 16),
+                          _buildTypeCommandeCard(),
+                        ],
+                      ),
+                    )
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ),
     );
   }
 
@@ -958,7 +419,10 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _nomClientController,
-              decoration: InputDecoration(
+              decoration: AppInputStyles.textFieldDecoration(
+                label: "Nom du client *",
+                icon: Icons.person_outline,),
+              /*InputDecoration(
                 labelText: "Nom du client *",
                 prefixIcon: const Icon(Icons.person_outline),
                 border: OutlineInputBorder(
@@ -968,13 +432,16 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: Colors.orange, width: 2),
                 ),
-              ),
+              ),*/
               validator: (val) => val == null || val.isEmpty ? "Nom requis" : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _telephoneController,
-              decoration: InputDecoration(
+              decoration:  AppInputStyles.textFieldDecoration(
+                label: "Téléphone *",
+                icon: Icons.phone_outlined,),
+              /*InputDecoration(
                 labelText: "Téléphone *",
                 prefixIcon: const Icon(Icons.phone_outlined),
                 border: OutlineInputBorder(
@@ -984,7 +451,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: Colors.orange, width: 2),
                 ),
-              ),
+              ),*/
               keyboardType: TextInputType.phone,
               validator: (val) =>
               val == null || val.isEmpty ? "Téléphone requis" : null,
@@ -1156,7 +623,10 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _numeroTableController,
-                decoration: InputDecoration(
+                decoration: AppInputStyles.textFieldDecoration(
+                    label: "Numéro de table",
+                icon: Icons.pin,),
+                /*InputDecoration(
                   labelText: "Numéro de table",
                   prefixIcon: const Icon(Icons.pin),
                   border: OutlineInputBorder(
@@ -1166,7 +636,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(color: Colors.orange, width: 2),
                   ),
-                ),
+                ),*/
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -1397,17 +867,36 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
                         ),
                         child: Row(
                           children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.orange,
-                              radius: 24,
-                              child: Text(
-                                '$quantite',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: produit.imageUrl != null && produit.imageUrl.isNotEmpty
+                                  ? Image.network(
+                                produit.imageUrl,
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return _buildPlaceholderImage();
+                                },
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    width: 60,
+                                    height: 60,
+                                    color: Colors.grey[200],
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                            : null,
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                                  : _buildPlaceholderImage(),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -1490,18 +979,12 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
   Widget _buildCoutTotalCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.orange.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.orange.shade200, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.orange.shade100,
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1526,7 +1009,6 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
             style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Colors.orange,
             ),
           ),
         ],
@@ -1542,5 +1024,3 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
     super.dispose();
   }
 }
-
-

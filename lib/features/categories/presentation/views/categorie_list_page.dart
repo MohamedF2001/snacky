@@ -214,7 +214,7 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
             );
           },
           onDelete: () {
-            _confirmDelete(context, categorie.id);
+            //_confirmDelete(context, categorie.id);
           },
           isDeleting: deleteState.isLoading,
         );

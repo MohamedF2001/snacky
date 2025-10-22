@@ -265,9 +265,6 @@ class _OrderDetailPageEnhancedState
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    Icon(Icons.attach_money,
-                        size: 14, color: Colors.grey.shade600),
-                    const SizedBox(width: 4),
                     Text(
                       'Prix unitaire: ${productPrice.toStringAsFixed(2)} FCFA',
                       style: TextStyle(
@@ -456,9 +453,20 @@ class _OrderDetailPageEnhancedState
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          title: const Text('Détails de la commande'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => context.pop(),
+          ),
+          title: Text(
+            'Commande ...',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
         ),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator(color: Colors.orange)),
       );
     }
 
@@ -468,7 +476,18 @@ class _OrderDetailPageEnhancedState
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          title: const Text('Détails de la commande'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => context.pop(),
+          ),
+          title: Text(
+            'Commande ....',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
         ),
         body: Center(
           child: Column(
@@ -499,7 +518,18 @@ class _OrderDetailPageEnhancedState
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          title: const Text('Détails de la commande'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => context.pop(),
+          ),
+          title: Text(
+            'Commande ...',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
         ),
         body: const Center(child: Text('Commande introuvable')),
       );
@@ -539,7 +569,7 @@ class _OrderDetailPageEnhancedState
         ],
       ),
       body: updateStatusState.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Colors.orange))
           : 
          Padding(
           padding: const EdgeInsets.all(24),

@@ -183,7 +183,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                         productState.product!.imageUrl!,
                         height: 400,
                         width: double.infinity,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         loadingBuilder: (context, child,
                             loadingProgress) {
                           if (loadingProgress == null) {
@@ -259,7 +259,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                             Chip(
                               labelPadding: AppStyle.chipPadding,
                               label: Text(
-                                "${productState.product?.prix.toStringAsFixed(2)} €",
+                                "${productState.product?.prix.toStringAsFixed(2)} F CFA",
                                 style: TextStyle(
                                   fontSize:
                                   AppStyle.priceFontSize,

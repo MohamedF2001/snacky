@@ -100,7 +100,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                 IconButton(
                   icon: const Icon(Icons.edit,color: AppColors.darkBlue,),
                   onPressed: () {
-                    context.push('/promotions/${widget.promotionId}/edit');
+                    //context.push('/promotions/${widget.promotionId}/edit');
                   },
                   tooltip: 'Modifier',
                 ),
@@ -112,8 +112,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
+                      color: Colors.orange,
                     ),
                   )
                       : const Icon(Icons.delete,color: Colors.red,),
@@ -244,7 +243,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "${_promotion!.tarif.toStringAsFixed(2)} €",
+                      "${_promotion!.tarif.toStringAsFixed(2)} %",
                       style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
@@ -512,7 +511,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        "${produit.prix.toStringAsFixed(2)} €",
+                        "${produit.prix.toStringAsFixed(2)} F CFA",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.green,
@@ -564,7 +563,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: () => context.go('/promotions'),
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,color: Colors.black,),
             label: const Text("Retour à la liste",
             style: TextStyle(color: Colors.black),),
             style: OutlinedButton.styleFrom(
@@ -586,7 +585,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
             label: const Text("Modifier"),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              backgroundColor: AppColors.darkBlue,
+              backgroundColor: AppColors.accentOrange,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
