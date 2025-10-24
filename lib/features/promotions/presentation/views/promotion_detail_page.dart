@@ -54,20 +54,17 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
           ref.read(deletePromotionProvider.notifier).reset();
           showDialog(
             context: context,
-            barrierDismissible: false, // empêche de fermer en cliquant dehors
+            barrierDismissible: false,
             builder: (context) {
               return SuccessDialog(
                 message: "Promotion supprimée avec succès",
                 onOk: () {
-                  Navigator.pop(context); // ferme le dialog
-                  context.go('/promotions'); // redirection
+                  Navigator.pop(context);
+                  context.go('/promotions');
                 },
               );
             },
           );
-
-          // Retourner à la liste
-          //context.go('/promotions');
         } else if (next.error != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -93,18 +90,18 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
         ),
         actions: [
           Padding(
-              padding: EdgeInsets.only(right: 20),
+            padding: const EdgeInsets.only(right: 20),
             child: Row(
               children: [
                 // Bouton d'édition
                 IconButton(
-                  icon: const Icon(Icons.edit,color: AppColors.darkBlue,),
+                  icon: const Icon(Icons.edit, color: AppColors.darkBlue),
                   onPressed: () {
                     //context.push('/promotions/${widget.promotionId}/edit');
                   },
                   tooltip: 'Modifier',
                 ),
-                SizedBox(width: 10,),
+                const SizedBox(width: 10),
                 // Bouton de suppression
                 IconButton(
                   icon: deleteState.isLoading
@@ -113,9 +110,10 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                     height: 20,
                     child: CircularProgressIndicator(
                       color: Colors.orange,
+                      strokeWidth: 2,
                     ),
                   )
-                      : const Icon(Icons.delete,color: Colors.red,),
+                      : const Icon(Icons.delete, color: Colors.red),
                   onPressed: deleteState.isLoading
                       ? null
                       : () => _confirmDelete(context, widget.promotionId),
@@ -149,30 +147,75 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
           ],
         ),
       )
-          : SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1200),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Card principale avec les infos de base
-                _buildMainInfoCard(),
-                const SizedBox(height: 24),
+          : LayoutBuilder(
+        builder: (context, constraints) {
+          // Responsive: deux colonnes pour les écrans larges
+          final isWideScreen = constraints.maxWidth > 900;
 
-                // Card avec les dates
-                _buildDatesCard(),
-                const SizedBox(height: 24),
+          if (isWideScreen) {
+            return _buildTwoColumnLayout();
+          } else {
+            return _buildSingleColumnLayout();
+          }
+        },
+      ),
+    );
+  }
 
-                // Card avec la liste des produits
-                _buildProductsCard(),
-                const SizedBox(height: 24),
-
-                // Boutons d'action
-                _buildActionButtons(context),
-              ],
+  // Layout à deux colonnes avec scroll indépendant
+  Widget _buildTwoColumnLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Colonne gauche - Informations principales
+          Expanded(
+            flex: 4,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildMainInfoCard(),
+                  const SizedBox(height: 24),
+                  _buildDatesCard(),
+                  const SizedBox(height: 24),
+                  _buildActionButtons(context),
+                ],
+              ),
             ),
+          ),
+          const SizedBox(width: 24),
+          // Colonne droite - Liste des produits
+          Expanded(
+            flex: 6,
+            child: SingleChildScrollView(
+              child: _buildProductsCard(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Layout à une colonne pour les petits écrans
+  Widget _buildSingleColumnLayout() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildMainInfoCard(),
+              const SizedBox(height: 24),
+              _buildDatesCard(),
+              const SizedBox(height: 24),
+              _buildProductsCard(),
+              const SizedBox(height: 24),
+              _buildActionButtons(context),
+            ],
           ),
         ),
       ),
@@ -483,12 +526,16 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        //color: Colors.orange.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child:
-                      //const Icon(Icons.fastfood, color: Colors.orange),
-                      Image.network(produit.imageUrl,width: 50,height: 50,)
+                      child: Image.network(
+                        produit.imageUrl,
+                        width: 50,
+                        height: 50,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.fastfood, color: Colors.orange, size: 50);
+                        },
+                      ),
                     ),
                     title: Text(
                       produit.nom,
@@ -563,9 +610,11 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: () => context.go('/promotions'),
-            icon: Icon(Icons.arrow_back,color: Colors.black,),
-            label: const Text("Retour à la liste",
-            style: TextStyle(color: Colors.black),),
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            label: const Text(
+              "Retour à la liste",
+              style: TextStyle(color: Colors.black),
+            ),
             style: OutlinedButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -579,9 +628,9 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
         Expanded(
           child: ElevatedButton.icon(
             onPressed: () {
-              context.push('/promotions/${widget.promotionId}/edit');
+              //context.push('/promotions/${widget.promotionId}/edit');
             },
-            //icon: const Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             label: const Text("Modifier"),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
