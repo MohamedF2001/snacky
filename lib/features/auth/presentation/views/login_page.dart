@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:snacky/core/error/failures.dart';
 import 'package:snacky/features/auth/presentation/providers/auth_provider.dart';
 
+import '../../../../const/app_colors.dart';
+import '../../../../const/app_input_style.dart';
+
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -48,9 +51,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Connexion')),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+            colors: [Colors.orange.shade400, Colors.orange.shade600],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -90,20 +93,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E3A8A),
-                            fontFamily: "Montserrat",
+                            color: Colors.black,
                           ),
                         ),
                         const SizedBox(height: 32),
                         TextFormField(
                           controller: _emailController,
-                          decoration: InputDecoration(
+                          decoration: AppInputStyles.textFieldDecoration(
+                            label: "Mot de passe",
+                            icon: Icons.email_outlined,
+                          ),
+                          /*InputDecoration(
                             prefixIcon: const Icon(Icons.email_outlined),
                             labelText: "Email",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                          ),
+                          ),*/
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Veuillez entrer votre email';
@@ -118,7 +124,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
-                          decoration: InputDecoration(
+                          decoration: AppInputStyles.textFieldDecoration(
+                              label: "Mot de passe",
+                            icon:  Icons.lock_outline,
+                            suffixIcon:  IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
+                          ) ,
+                          /*InputDecoration(
                             prefixIcon: const Icon(Icons.lock_outline),
                             labelText: "Mot de passe",
                             border: OutlineInputBorder(
@@ -136,7 +158,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 });
                               },
                             ),
-                          ),
+                          ),*/
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Veuillez entrer votre mot de passe';
@@ -161,6 +183,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               }
                             },
                             child: const Text('Se connecter'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accentOrange,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.all(16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
                           ),
                         if (authState.error != null)
                           Padding(

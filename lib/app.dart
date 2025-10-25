@@ -6,6 +6,7 @@ import 'package:snacky/features/auth/presentation/providers/auth_provider.dart';
 import 'package:snacky/features/auth/presentation/views/login_page.dart';
 import 'package:snacky/features/categories/presentation/views/categorie_list_page.dart';
 import 'package:snacky/features/categories/presentation/views/category_create_page.dart';
+import 'package:snacky/features/dashboard/dashboard_page.dart';
 import 'package:snacky/features/products/presentation/views/admin_home_page.dart';
 import 'package:snacky/features/products/presentation/views/details_product_page.dart';
 import 'package:snacky/features/products/presentation/views/product_by_categorie_page.dart';
@@ -49,7 +50,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/admin',
             name: 'dashboard',
-            builder: (context, state) => Center(
+            builder: (context, state) => DashboardPage()
+            /*Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -66,7 +68,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                 ],
               ),
-            ),
+            ),*/
           ),
           GoRoute(
             path: '/categories',

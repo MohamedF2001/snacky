@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:snacky/features/promotions/presentation/providers/promotion_provider.dart';
 
+import '../../../../const/app_colors.dart';
+
 class AllPromotionPage extends ConsumerStatefulWidget {
   const AllPromotionPage({super.key});
 
@@ -118,7 +120,7 @@ class _AllPromotionPageState extends ConsumerState<AllPromotionPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              elevation: 3,
+              elevation: 1,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child:
@@ -156,7 +158,7 @@ class _AllPromotionPageState extends ConsumerState<AllPromotionPage> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.orange,
+        backgroundColor: AppColors.accentOrange,
         foregroundColor: Colors.black,
         onPressed: () {
           context.push('/promotions/create');

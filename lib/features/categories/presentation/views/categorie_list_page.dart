@@ -6,6 +6,8 @@ import 'package:snacky/features/categories/presentation/providers/categorie_prov
 import 'package:snacky/features/categories/presentation/widgets/category_cart.dart';
 import 'package:snacky/features/categories/presentation/widgets/succes_dialog.dart';
 
+import '../../../../const/app_colors.dart';
+
 class CategorieListPage extends ConsumerStatefulWidget {
   const CategorieListPage({super.key});
 
@@ -110,7 +112,7 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
         child: _buildBody(categorieState, deleteState),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.orange,
+        backgroundColor: AppColors.accentOrange,
         foregroundColor: Colors.black,
         onPressed: () {
           context.push('/categories/create');

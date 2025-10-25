@@ -4,12 +4,14 @@ class AppInputStyles {
   static InputDecoration textFieldDecoration({
     required String label,
     IconData? icon,
+    Widget? suffixIcon,
   }) {
     return InputDecoration(
       labelStyle: TextStyle(
         color: Colors.black
       ),
       labelText: label,
+      suffixIcon: suffixIcon,
       prefixIcon: icon != null ? Icon(icon) : null,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

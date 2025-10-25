@@ -4,7 +4,8 @@ class AppColors {
   // ============ COULEURS PRINCIPALES ============
   static const Color primaryRed = Color(0xFFE63946);
   static const Color secondaryBlue = Color(0xFF457B9D);
-  static const Color accentOrange = Color(0xFFF4A261);
+  //static const Color accentOrange = Color(0xFFF4A261);
+  static const Color accentOrange = Colors.orange;
   static const Color darkBlue = Color(0xFF1D3557);
   static const Color lightCream = Color(0xFFF1FAEE);
 
@@ -29,7 +30,7 @@ class AppColors {
   static const Color buttonSuccessHover = Color(0xFF21867A);
 
   // ============ COULEURS DE CHIPS ============
-  static const Color chipPrice = Color(0xFFF4A261);
+  static const Color chipPrice = Colors.orangeAccent;
   static const Color chipPrice2 = Color(0x5CFFE0B2);
   static const Color chipPromotion = Color(0xFFE63946);
 

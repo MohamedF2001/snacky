@@ -508,7 +508,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                 label: const Text("Modifier"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.accentOrange,
-                  foregroundColor: Colors.white,
+                  foregroundColor: Colors.black,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

@@ -21,7 +21,7 @@ class CategoryCard extends StatelessWidget {
     required this.onTap,
     required this.onDelete,
     this.isDeleting = false,
-    this.backgroundColor = const Color(0xFFFFE0B2), // Colors.orange[100]
+    this.backgroundColor = AppColors.chipPrice, // Colors.orange[100]
   });
 
   @override
@@ -47,6 +47,7 @@ class CategoryCard extends StatelessWidget {
                       name,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
+                        color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -134,7 +135,7 @@ class CategoryCardTwo extends StatelessWidget {
     required this.onDelete,
     this.isDeleting = false,
     //this.backgroundColor = const Color(0x5CFFE0B2), // Colors.orange[100]
-    this.backgroundColor = AppColors.accentOrange
+    required this.backgroundColor,
   });
 
   @override

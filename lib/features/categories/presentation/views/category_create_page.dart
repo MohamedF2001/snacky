@@ -64,7 +64,7 @@ class _CategoryCreatePageState extends ConsumerState<CategoryCreatePage> {
                         4, // moitié de la moitié
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF1E3A8A),
+                        backgroundColor: Colors.orange,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

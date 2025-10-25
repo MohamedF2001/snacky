@@ -9,6 +9,7 @@ import 'package:snacky/core/utils/debug_product_info.dart';
 import 'features/categories/presentation/providers/categorie_provider.dart';
 import 'features/categories/presentation/widgets/category_cart.dart';
 import 'features/products/presentation/providers/product_provider.dart';
+import 'hero_banner.dart';
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -79,7 +80,7 @@ class _HomeState extends ConsumerState<Home> {
         child: Column(
           children: [
             // Bannière bleue
-            Padding(
+            /*Padding(
               padding: const EdgeInsets.all(16),
               child: Container(
                 decoration: BoxDecoration(
@@ -121,7 +122,9 @@ class _HomeState extends ConsumerState<Home> {
                   ],
                 ),
               ),
-            ),
+            ),*/
+
+            HeroBannerWithTypewriter(),
 
             const SizedBox(height: 20),
 
@@ -283,6 +286,7 @@ class _HomeState extends ConsumerState<Home> {
                       return Padding(
                         padding: const EdgeInsets.all(12),
                         child: CategoryCardTwo(
+                          backgroundColor: Colors.grey.withOpacity(0.09),
                           id: categorie.id,
                           name: categorie.nom,
                           imagePath: "assets/images/categories/${categorie.description}.png",
