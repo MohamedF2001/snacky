@@ -19,7 +19,7 @@ class OrderListPageWithFilters extends ConsumerStatefulWidget {
 class _OrderListPageWithFiltersState
     extends ConsumerState<OrderListPageWithFilters> {
   String _selectedStatus = 'tous';
-  String _searchQuery = '';
+  final String _searchQuery = '';
 
   @override
   void initState() {
@@ -32,17 +32,11 @@ class _OrderListPageWithFiltersState
   Color _getStatusColor(String statut) {
     switch (statut.toLowerCase()) {
       case 'en cours':
-      case 'en cours':
         return Colors.blue.shade100;
-      case 'validé':
       case 'validé':
         return Colors.purple.shade100;
       case 'terminé':
-      case 'terminé':
-      case 'terminé':
         return Colors.green.shade100;
-      case 'annulé':
-      case 'annulé':
       case 'annulé':
         return Colors.red.shade100;
       default:
@@ -53,17 +47,11 @@ class _OrderListPageWithFiltersState
   Color _getStatusTextColor(String statut) {
     switch (statut.toLowerCase()) {
       case 'en cours':
-      case 'en cours':
         return Colors.blue.shade700;
-      case 'validé':
       case 'validé':
         return Colors.purple.shade700;
       case 'terminé':
-      case 'terminé':
-      case 'terminé':
         return Colors.green.shade700;
-      case 'annulé':
-      case 'annulé':
       case 'annulé':
         return Colors.red.shade700;
       default:
@@ -71,9 +59,18 @@ class _OrderListPageWithFiltersState
     }
   }
 
-  String _formatDate(DateTime? date) {
+  /* String _formatDate(DateTime? date) {
     if (date == null) return 'N/A';
     return DateFormat('dd/MM/yyyy à HH:mm').format(date);
+  } */
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'N/A';
+
+    // ✅ Convertir en heure locale avant d’afficher
+    final localDate = date.toLocal();
+
+    return DateFormat('dd/MM/yyyy à HH:mm').format(localDate);
   }
 
   String _formatOrderId(String? id) {
@@ -113,10 +110,7 @@ class _OrderListPageWithFiltersState
           children: [
             const Text(
               'Statut',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             Wrap(
@@ -150,7 +144,7 @@ class _OrderListPageWithFiltersState
                     setState(() => _selectedStatus = 'terminé');
                   },
                 ),
-                SizedBox(height: 10,),
+                SizedBox(height: 10),
                 FilterChip(
                   label: const Text('Annulé'),
                   selected: _selectedStatus == 'annulé',
@@ -178,7 +172,10 @@ class _OrderListPageWithFiltersState
               });
               Navigator.pop(context);
             },
-            child: Text('Réinitialiser',style: TextStyle(color: AppColors.textOnColor),),
+            child: Text(
+              'Réinitialiser',
+              style: TextStyle(color: AppColors.textOnColor),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
@@ -190,7 +187,10 @@ class _OrderListPageWithFiltersState
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text('Appliquer', style: TextStyle(color: AppColors.textOnColor),),
+            child: Text(
+              'Appliquer',
+              style: TextStyle(color: AppColors.textOnColor),
+            ),
           ),
         ],
       ),
@@ -217,10 +217,7 @@ class _OrderListPageWithFiltersState
                 color: Colors.grey.shade600,
               ),
             ),
-            Text(
-              " / ",
-              style: TextStyle(color: Colors.grey.shade400),
-            ),
+            Text(" / ", style: TextStyle(color: Colors.grey.shade400)),
             const Text(
               "Commandes",
               style: TextStyle(
@@ -241,7 +238,10 @@ class _OrderListPageWithFiltersState
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -264,30 +264,50 @@ class _OrderListPageWithFiltersState
               children: [
                 const Text(
                   "Commandes",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 // Boutons de filtre par statut
                 _buildStatusButton('Tous', 'tous', filteredOrders.length),
                 const SizedBox(width: 8),
-                _buildStatusButton('En cours', 'en cours',
-                    orderState.orders.where((o) => o.statut.toLowerCase() == 'en cours').length),
+                _buildStatusButton(
+                  'En cours',
+                  'en cours',
+                  orderState.orders
+                      .where((o) => o.statut.toLowerCase() == 'en cours')
+                      .length,
+                ),
                 const SizedBox(width: 8),
-                _buildStatusButton('Validé', 'validé',
-                    orderState.orders.where((o) => o.statut.toLowerCase() == 'validé').length),
+                _buildStatusButton(
+                  'Validé',
+                  'validé',
+                  orderState.orders
+                      .where((o) => o.statut.toLowerCase() == 'validé')
+                      .length,
+                ),
                 const SizedBox(width: 8),
-                _buildStatusButton('Terminé', 'terminé',
-                    orderState.orders.where((o) => o.statut.toLowerCase() == 'terminé').length),
+                _buildStatusButton(
+                  'Terminé',
+                  'terminé',
+                  orderState.orders
+                      .where((o) => o.statut.toLowerCase() == 'terminé')
+                      .length,
+                ),
                 const SizedBox(width: 8),
-                _buildStatusButton('Annulé', 'annulé',
-                    orderState.orders.where((o) => o.statut.toLowerCase() == 'annulé').length),
+                _buildStatusButton(
+                  'Annulé',
+                  'annulé',
+                  orderState.orders
+                      .where((o) => o.statut.toLowerCase() == 'annulé')
+                      .length,
+                ),
                 const SizedBox(width: 24),
                 // Bouton Show avec compteur
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(8),
@@ -297,7 +317,10 @@ class _OrderListPageWithFiltersState
                       const Text('Show'),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(4),
@@ -323,179 +346,189 @@ class _OrderListPageWithFiltersState
             Expanded(
               child: orderState.isLoading
                   ? Center(
-                child: SpinKitThreeBounce(
-                  color: AppColors.accentOrange,
-                  size: 30.0,
-                ),
-              )
+                      child: SpinKitThreeBounce(
+                        color: AppColors.accentOrange,
+                        size: 30.0,
+                      ),
+                    )
                   : orderState.error != null
                   ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Erreur : ${orderState.error!.toString()}"),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        ref.read(orderListNotifier.notifier).getOrders();
-                      },
-                      child: const Text("Réessayer"),
-                    ),
-                  ],
-                ),
-              )
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Erreur : ${orderState.error!.toString()}"),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              ref.read(orderListNotifier.notifier).getOrders();
+                            },
+                            child: const Text("Réessayer"),
+                          ),
+                        ],
+                      ),
+                    )
                   : filteredOrders.isEmpty
                   ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.search_off,
-                      size: 64,
-                      color: Colors.grey[400],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Aucune commande trouvée",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              )
-                  : Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade200,
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    // En-tête du tableau
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                        ),
-                      ),
-                      child: Row(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildTableHeader('No', flex: 1),
-                          _buildTableHeader('Order ID', flex: 2),
-                          _buildTableHeader('Statut de la commande', flex: 2),
-                          _buildTableHeader('Restaurant', flex: 2),
-                          _buildTableHeader('Customer', flex: 2),
-                          _buildTableHeader('Date de création', flex: 3),
-                          _buildTableHeader('Date de mise à jour', flex: 3),
+                          Icon(
+                            Icons.search_off,
+                            size: 64,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            "Aucune commande trouvée",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                    // Corps du tableau
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: filteredOrders.length,
-                        separatorBuilder: (context, index) => Divider(
-                          height: 1,
-                          color: Colors.grey.shade200,
-                        ),
-                        itemBuilder: (context, index) {
-                          final order = filteredOrders[index];
-                          return InkWell(
-                            onTap: () {
-                              context.push('/orders/detail/${order.id}');
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 20,
-                              ),
-                              child: Row(
-                                children: [
-                                  _buildTableCell('${index + 1}', flex: 1),
-                                  _buildTableCell(
-                                    _formatOrderId(order.id),
-                                    flex: 2,
-                                    isLink: true,
-                                  ),
-                                  _buildStatusCell(order.statut, flex: 2),
-                                  _buildTableCell(
-                                    order.surPlace
-                                        ? 'Sur place${order.numeroTable != null ? " (T${order.numeroTable})" : ""}'
-                                        : order.livraison
-                                        ? 'Livraison'
-                                        : 'N/A',
-                                    flex: 2,
-                                  ),
-                                  _buildTableCell(order.nomClient, flex: 2),
-                                  _buildTableCell(
-                                    _formatDate(order.createdAt),
-                                    flex: 3,
-                                  ),
-                                  _buildTableCell(
-                                    _formatDate(order.createdAt),
-                                    flex: 3,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    // Footer avec pagination
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 16,
-                      ),
+                    )
+                  : Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border(
-                          top: BorderSide(color: Colors.grey.shade200),
-                        ),
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(12),
-                          bottomRight: Radius.circular(12),
-                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
                         children: [
-                          Text(
-                            '1 of ${(filteredOrders.length / 10).ceil()}',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
+                          // En-tête du tableau
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50,
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                topRight: Radius.circular(12),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                _buildTableHeader('No', flex: 1),
+                                _buildTableHeader('Order ID', flex: 2),
+                                _buildTableHeader(
+                                  'Statut de la commande',
+                                  flex: 2,
+                                ),
+                                _buildTableHeader('Restaurant', flex: 2),
+                                _buildTableHeader('Customer', flex: 2),
+                                _buildTableHeader('Date de création', flex: 3),
+                                _buildTableHeader(
+                                  'Date de mise à jour',
+                                  flex: 3,
+                                ),
+                              ],
                             ),
                           ),
-                          Row(
-                            children: [
-                              _buildPaginationButton('1', true),
-                              _buildPaginationButton('2', false),
-                              _buildPaginationButton('3', false),
-                              _buildPaginationButton('4...', false),
-                              _buildPaginationButton('10', false),
-                            ],
+                          // Corps du tableau
+                          Expanded(
+                            child: ListView.separated(
+                              itemCount: filteredOrders.length,
+                              separatorBuilder: (context, index) => Divider(
+                                height: 1,
+                                color: Colors.grey.shade200,
+                              ),
+                              itemBuilder: (context, index) {
+                                final order = filteredOrders[index];
+                                return InkWell(
+                                  onTap: () {
+                                    context.push('/orders/detail/${order.id}');
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 20,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        _buildTableCell(
+                                          '${index + 1}',
+                                          flex: 1,
+                                        ),
+                                        _buildTableCell(
+                                          _formatOrderId(order.id),
+                                          flex: 2,
+                                          isLink: true,
+                                        ),
+                                        _buildStatusCell(order.statut, flex: 2),
+                                        _buildTableCell(
+                                          order.surPlace
+                                              ? 'Sur place${order.numeroTable != null ? " (T${order.numeroTable})" : ""}'
+                                              : order.livraison
+                                              ? 'Livraison'
+                                              : 'N/A',
+                                          flex: 2,
+                                        ),
+                                        _buildTableCell(
+                                          order.nomClient,
+                                          flex: 2,
+                                        ),
+                                        _buildTableCell(
+                                          _formatDate(order.createdAt),
+                                          flex: 3,
+                                        ),
+                                        _buildTableCell(
+                                          _formatDate(order.createdAt),
+                                          flex: 3,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          // Footer avec pagination
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border(
+                                top: BorderSide(color: Colors.grey.shade200),
+                              ),
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(12),
+                                bottomRight: Radius.circular(12),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '1 of ${(filteredOrders.length / 10).ceil()}',
+                                  style: TextStyle(color: Colors.grey.shade600),
+                                ),
+                                Row(
+                                  children: [
+                                    _buildPaginationButton('1', true),
+                                    _buildPaginationButton('2', false),
+                                    _buildPaginationButton('3', false),
+                                    _buildPaginationButton('4...', false),
+                                    _buildPaginationButton('10', false),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
             ),
           ],
         ),
@@ -544,7 +577,11 @@ class _OrderListPageWithFiltersState
     );
   }
 
-  Widget _buildTableCell(String text, {required int flex, bool isLink = false}) {
+  Widget _buildTableCell(
+    String text, {
+    required int flex,
+    bool isLink = false,
+  }) {
     return Expanded(
       flex: flex,
       child: Text(
@@ -618,4 +655,3 @@ class _OrderListPageWithFiltersState
     );
   }
 }
-

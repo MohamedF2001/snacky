@@ -4,8 +4,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:snacky/const/app_colors.dart';
-import 'package:snacky/core/utils/debug_product_info.dart';
-
 import 'features/categories/presentation/providers/categorie_provider.dart';
 import 'features/categories/presentation/widgets/category_cart.dart';
 import 'features/products/presentation/providers/product_provider.dart';
@@ -53,7 +51,7 @@ class _HomeState extends ConsumerState<Home> {
 
     return Scaffold(
       backgroundColor: AppColors.neutralGrey100,
-      appBar:AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
@@ -68,8 +66,11 @@ class _HomeState extends ConsumerState<Home> {
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              icon: const Icon(Icons.notifications, color: AppColors.neutralBlack),
-              onPressed: (){},
+              icon: const Icon(
+                Icons.notifications,
+                color: AppColors.neutralBlack,
+              ),
+              onPressed: () {},
               tooltip: 'Notifications',
             ),
           ),
@@ -79,51 +80,7 @@ class _HomeState extends ConsumerState<Home> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Bannière bleue
-            /*Padding(
-              padding: const EdgeInsets.all(16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.accentOrange,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                width: double.infinity,
-                height: 250,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // 🧠 Texte d'accroche
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 30),
-                        child: Text(
-                          "Gérez votre fast-food en toute simplicité 🍔",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            height: 1.3,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // 🖼️ Illustration
-                    Padding(
-                      padding: const EdgeInsets.only(right: 0),
-                      child: Image.asset(
-                        'assets/images/fast.png',
-                        width: 550,
-                        height: 400,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),*/
-
+            // ============= HERO BANNER =============
             HeroBannerWithTypewriter(),
 
             const SizedBox(height: 20),
@@ -136,10 +93,7 @@ class _HomeState extends ConsumerState<Home> {
                 children: [
                   const Text(
                     "Catégorie",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert),
@@ -289,7 +243,8 @@ class _HomeState extends ConsumerState<Home> {
                           backgroundColor: Colors.grey.withOpacity(0.09),
                           id: categorie.id,
                           name: categorie.nom,
-                          imagePath: "assets/images/categories/${categorie.description}.png",
+                          imagePath:
+                              "assets/images/categories/${categorie.description}.png",
                           onTap: () {
                             context.push(
                               '/categories/${categorie.id}/products',
@@ -315,10 +270,7 @@ class _HomeState extends ConsumerState<Home> {
                 children: [
                   const Text(
                     "Produits Populaires",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert),
@@ -388,9 +340,7 @@ class _HomeState extends ConsumerState<Home> {
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: () {
-                          ref
-                              .read(productListNotifier.notifier)
-                              .getProduits();
+                          ref.read(productListNotifier.notifier).getProduits();
                         },
                         icon: const Icon(Icons.refresh),
                         label: const Text("Réessayer"),
@@ -422,6 +372,14 @@ class _HomeState extends ConsumerState<Home> {
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
                         onPressed: () {
                           context.push('/products/create');
                         },
@@ -436,7 +394,7 @@ class _HomeState extends ConsumerState<Home> {
             // Liste horizontale des produits populaires (limité à 5)
             if (popularProducts.isNotEmpty)
               SizedBox(
-                height: 230,
+                height: 250,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -471,28 +429,39 @@ class _HomeState extends ConsumerState<Home> {
                                 ),
                                 child: product.imageUrl != null
                                     ? Image.network(
-                                  product.imageUrl!,
-                                  height: 120,
-                                  width: double.infinity,
-                                  fit: BoxFit.contain,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    }
-                                    return Shimmer.fromColors(
-                                      baseColor: Colors.grey[300]!,
-                                      highlightColor: Colors.grey[100]!,
-                                      child: Container(
+                                        product.imageUrl!,
                                         height: 120,
                                         width: double.infinity,
-                                        color: Colors.white,
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder:
-                                      (context, error, stackTrace) =>
-                                      Container(
+                                        fit: BoxFit.contain,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return Shimmer.fromColors(
+                                                baseColor: Colors.grey[300]!,
+                                                highlightColor:
+                                                    Colors.grey[100]!,
+                                                child: Container(
+                                                  height: 120,
+                                                  width: double.infinity,
+                                                  color: Colors.white,
+                                                ),
+                                              );
+                                            },
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Container(
+                                                  height: 120,
+                                                  width: double.infinity,
+                                                  color: Colors.grey[300],
+                                                  child: const Icon(
+                                                    Icons.fastfood,
+                                                    size: 40,
+                                                  ),
+                                                ),
+                                      )
+                                    : Container(
                                         height: 120,
                                         width: double.infinity,
                                         color: Colors.grey[300],
@@ -501,16 +470,6 @@ class _HomeState extends ConsumerState<Home> {
                                           size: 40,
                                         ),
                                       ),
-                                )
-                                    : Container(
-                                  height: 120,
-                                  width: double.infinity,
-                                  color: Colors.grey[300],
-                                  child: const Icon(
-                                    Icons.fastfood,
-                                    size: 40,
-                                  ),
-                                ),
                               ),
 
                               // NOM + PRIX
@@ -551,7 +510,7 @@ class _HomeState extends ConsumerState<Home> {
                                       backgroundColor: AppColors.chipPrice,
                                       visualDensity: VisualDensity.compact,
                                       materialTapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
+                                          MaterialTapTargetSize.shrinkWrap,
                                     ),
                                   ],
                                 ),

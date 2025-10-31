@@ -11,13 +11,11 @@ import '../../../categories/presentation/widgets/succes_dialog.dart';
 class PromotionDetailPage extends ConsumerStatefulWidget {
   final String promotionId;
 
-  const PromotionDetailPage({
-    super.key,
-    required this.promotionId,
-  });
+  const PromotionDetailPage({super.key, required this.promotionId});
 
   @override
-  ConsumerState<PromotionDetailPage> createState() => _PromotionDetailPageState();
+  ConsumerState<PromotionDetailPage> createState() =>
+      _PromotionDetailPageState();
 }
 
 class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
@@ -36,7 +34,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
     // Charger la promotion depuis la liste
     final promotionState = ref.read(promotionListNotifier);
     _promotion = promotionState.promotions.firstWhere(
-          (p) => p.id == widget.promotionId,
+      (p) => p.id == widget.promotionId,
       orElse: () => throw Exception('Promotion non trouvée'),
     );
 
@@ -46,38 +44,35 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
   @override
   Widget build(BuildContext context) {
     // Écouter les changements de suppression
-    ref.listen<DeletePromotionState>(
-      deletePromotionProvider,
-          (previous, next) {
-        if (next.success) {
-          // Réinitialiser l'état
-          ref.read(deletePromotionProvider.notifier).reset();
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return SuccessDialog(
-                message: "Promotion supprimée avec succès",
-                onOk: () {
-                  Navigator.pop(context);
-                  context.go('/promotions');
-                },
-              );
-            },
-          );
-        } else if (next.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Erreur : ${next.error!.toString()}"),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
-          );
+    ref.listen<DeletePromotionState>(deletePromotionProvider, (previous, next) {
+      if (next.success) {
+        // Réinitialiser l'état
+        ref.read(deletePromotionProvider.notifier).reset();
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return SuccessDialog(
+              message: "Promotion supprimée avec succès",
+              onOk: () {
+                Navigator.pop(context);
+                context.go('/promotions');
+              },
+            );
+          },
+        );
+      } else if (next.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erreur : ${next.error!.toString()}"),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
 
-          ref.read(deletePromotionProvider.notifier).clearError();
-        }
-      },
-    );
+        ref.read(deletePromotionProvider.notifier).clearError();
+      }
+    });
 
     final deleteState = ref.watch(deletePromotionProvider);
 
@@ -106,13 +101,13 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                 IconButton(
                   icon: deleteState.isLoading
                       ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.orange,
-                      strokeWidth: 2,
-                    ),
-                  )
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.orange,
+                            strokeWidth: 2,
+                          ),
+                        )
                       : const Icon(Icons.delete, color: Colors.red),
                   onPressed: deleteState.isLoading
                       ? null
@@ -121,44 +116,47 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
       body: _isLoading
           ? const Center(
-        child: SpinKitThreeBounce(color: AppColors.accentOrange, size: 30.0),
-      )
+              child: SpinKitThreeBounce(
+                color: AppColors.accentOrange,
+                size: 30.0,
+              ),
+            )
           : _promotion == null
           ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
-            const SizedBox(height: 16),
-            const Text(
-              "Promotion non trouvée",
-              style: TextStyle(fontSize: 18, color: Colors.red),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => context.go('/promotions'),
-              child: const Text("Retour à la liste"),
-            ),
-          ],
-        ),
-      )
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Promotion non trouvée",
+                    style: TextStyle(fontSize: 18, color: Colors.red),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => context.go('/promotions'),
+                    child: const Text("Retour à la liste"),
+                  ),
+                ],
+              ),
+            )
           : LayoutBuilder(
-        builder: (context, constraints) {
-          // Responsive: deux colonnes pour les écrans larges
-          final isWideScreen = constraints.maxWidth > 900;
+              builder: (context, constraints) {
+                // Responsive: deux colonnes pour les écrans larges
+                final isWideScreen = constraints.maxWidth > 900;
 
-          if (isWideScreen) {
-            return _buildTwoColumnLayout();
-          } else {
-            return _buildSingleColumnLayout();
-          }
-        },
-      ),
+                if (isWideScreen) {
+                  return _buildTwoColumnLayout();
+                } else {
+                  return _buildSingleColumnLayout();
+                }
+              },
+            ),
     );
   }
 
@@ -189,9 +187,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
           // Colonne droite - Liste des produits
           Expanded(
             flex: 6,
-            child: SingleChildScrollView(
-              child: _buildProductsCard(),
-            ),
+            child: SingleChildScrollView(child: _buildProductsCard()),
           ),
         ],
       ),
@@ -240,7 +236,11 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                     color: Colors.orange.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.local_offer, size: 25, color: Colors.orange),
+                  child: const Icon(
+                    Icons.local_offer,
+                    size: 25,
+                    color: Colors.orange,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -271,7 +271,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
             const Divider(height: 32),
             Row(
               children: [
-                const Icon(Icons.euro, color: Colors.green, size: 25),
+                const Icon(Icons.percent, color: Colors.green, size: 25),
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,10 +319,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                 const SizedBox(width: 12),
                 const Text(
                   "Période de validité",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -356,7 +353,12 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
     );
   }
 
-  Widget _buildDateInfo(String label, DateTime? date, Color color, IconData icon) {
+  Widget _buildDateInfo(
+    String label,
+    DateTime? date,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -384,10 +386,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
           const SizedBox(height: 8),
           Text(
             date != null ? _formatDate(date) : "Non définie",
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -400,7 +399,9 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
     }
 
     final now = DateTime.now();
-    final isActive = now.isAfter(_promotion!.dateDebut!) && now.isBefore(_promotion!.dateFin!);
+    final isActive =
+        now.isAfter(_promotion!.dateDebut!) &&
+        now.isBefore(_promotion!.dateFin!);
     final isUpcoming = now.isBefore(_promotion!.dateDebut!);
     final isExpired = now.isAfter(_promotion!.dateFin!);
 
@@ -450,7 +451,8 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
   // Card avec la liste des produits
   Widget _buildProductsCard() {
     final produitsIds = _promotion!.produitsIds as List<String>;
-    final hasFullProducts = _promotion!.produits is List &&
+    final hasFullProducts =
+        _promotion!.produits is List &&
         _promotion!.produits.isNotEmpty &&
         _promotion!.produits.first.nom != null &&
         _promotion!.produits.first.nom.isNotEmpty;
@@ -468,7 +470,11 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.inventory_2, color: Colors.purple, size: 24),
+                    const Icon(
+                      Icons.inventory_2,
+                      color: Colors.purple,
+                      size: 24,
+                    ),
                     const SizedBox(width: 12),
                     const Text(
                       "Produits inclus",
@@ -480,7 +486,10 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.purple.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -503,7 +512,11 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                   padding: const EdgeInsets.all(32),
                   child: Column(
                     children: [
-                      Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey[400]),
+                      Icon(
+                        Icons.inventory_2_outlined,
+                        size: 64,
+                        color: Colors.grey[400],
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         "Aucun produit associé",
@@ -522,7 +535,10 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                 itemBuilder: (context, i) {
                   final produit = _promotion!.produits[i];
                   return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 0,
+                    ),
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -533,7 +549,11 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                         width: 50,
                         height: 50,
                         errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.fastfood, color: Colors.orange, size: 50);
+                          return const Icon(
+                            Icons.fastfood,
+                            color: Colors.orange,
+                            size: 50,
+                          );
                         },
                       ),
                     ),
@@ -544,15 +564,20 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                         fontSize: 16,
                       ),
                     ),
-                    subtitle: produit.description != null && produit.description!.isNotEmpty
+                    subtitle:
+                        produit.description != null &&
+                            produit.description!.isNotEmpty
                         ? Text(
-                      produit.description!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    )
+                            produit.description!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          )
                         : null,
                     trailing: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.green.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -578,7 +603,11 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
                 child: Center(
                   child: Column(
                     children: [
-                      const Icon(Icons.info_outline, size: 48, color: Colors.blue),
+                      const Icon(
+                        Icons.info_outline,
+                        size: 48,
+                        color: Colors.blue,
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         "${produitsIds.length} produit${produitsIds.length > 1 ? 's' : ''} associé${produitsIds.length > 1 ? 's' : ''}",
@@ -663,7 +692,7 @@ class _PromotionDetailPageState extends ConsumerState<PromotionDetailPage> {
         ),
         content: Text(
           "Êtes-vous sûr de vouloir supprimer la promotion \"${_promotion!.nom}\" ?\n\n"
-              "Cette action est irréversible.",
+          "Cette action est irréversible.",
         ),
         actions: [
           TextButton(

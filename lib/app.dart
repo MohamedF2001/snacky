@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shimmer/main.dart';
 import 'package:snacky/features/auth/presentation/providers/auth_provider.dart';
 import 'package:snacky/features/auth/presentation/views/login_page.dart';
 import 'package:snacky/features/categories/presentation/views/categorie_list_page.dart';
@@ -43,14 +42,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
         routes: [
           GoRoute(
-              path: '/home',
-              name: 'home',
-              builder: (context, state) => Home()
+            path: '/home',
+            name: 'home',
+            builder: (context, state) => Home(),
           ),
           GoRoute(
             path: '/admin',
             name: 'dashboard',
-            builder: (context, state) => DashboardPage()
+            builder: (context, state) => DashboardPage(),
             /*Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -137,8 +136,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               final produitId = state.pathParameters['id']!;
               final productNom = state.extra as String? ?? "Produits";
               return DetailsProductPage(
-                  produitId: produitId,
-                  productNom: productNom,
+                produitId: produitId,
+                productNom: productNom,
               );
             },
           ),
@@ -148,16 +147,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const OrderListPageWithFilters(),
           ),
           GoRoute(
-              path: '/promotions',
+            path: '/promotions',
             name: 'promotions',
-            builder: (context, state) => const AllPromotionPage()
+            builder: (context, state) => const AllPromotionPage(),
           ),
           GoRoute(
             path: '/promotions/create',
             builder: (context, state) => const CreatePromotionPage(),
           ),
           GoRoute(
-              path: '/promotions/:id',
+            path: '/promotions/:id',
             builder: (context, state) {
               final promotionId = state.pathParameters['id']!;
               return PromotionDetailPage(promotionId: promotionId);

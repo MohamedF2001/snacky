@@ -13,7 +13,8 @@ class CreatePromotionPage extends ConsumerStatefulWidget {
   const CreatePromotionPage({super.key});
 
   @override
-  ConsumerState<CreatePromotionPage> createState() => _CreatePromotionPageState();
+  ConsumerState<CreatePromotionPage> createState() =>
+      _CreatePromotionPageState();
 }
 
 class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
@@ -63,9 +64,7 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
 
     if (productState.isLoading && productState.products.isEmpty) {
       return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(color: Colors.orange),
-        ),
+        body: Center(child: CircularProgressIndicator(color: Colors.orange)),
       );
     }
 
@@ -90,10 +89,7 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                 color: Colors.grey.shade600,
               ),
             ),
-            Text(
-              " / ",
-              style: TextStyle(color: Colors.grey.shade400),
-            ),
+            Text(" / ", style: TextStyle(color: Colors.grey.shade400)),
             const Text(
               "Créer une promotion",
               style: TextStyle(
@@ -172,7 +168,7 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                           label: "Ex: Menu Spécial du Vendredi",
                         ),
                         validator: (v) =>
-                        v == null || v.isEmpty ? "Nom requis" : null,
+                            v == null || v.isEmpty ? "Nom requis" : null,
                       ),
                       const SizedBox(height: 20),
                       // Tarif
@@ -189,10 +185,11 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                         controller: _tarifController,
                         keyboardType: TextInputType.number,
                         decoration: AppInputStyles.textFieldDecoration(
-                          label: "Prix en F CFA",
+                          icon: Icons.percent,
+                          label: "Pourcentage",
                         ),
                         validator: (v) =>
-                        v == null || v.isEmpty ? "Tarif requis" : null,
+                            v == null || v.isEmpty ? "Tarif requis" : null,
                       ),
                       const SizedBox(height: 24),
                       const Divider(),
@@ -250,11 +247,14 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                                   },
                                   child: AbsorbPointer(
                                     child: TextFormField(
-                                      decoration: AppInputStyles.textFieldDecoration(
-                                        label: "Sélectionner",
-                                      ).copyWith(
-                                        prefixIcon: const Icon(Icons.calendar_today),
-                                      ),
+                                      decoration:
+                                          AppInputStyles.textFieldDecoration(
+                                            label: "Sélectionner",
+                                          ).copyWith(
+                                            prefixIcon: const Icon(
+                                              Icons.calendar_today,
+                                            ),
+                                          ),
                                       controller: TextEditingController(
                                         text: formatDate(_dateDebut),
                                       ),
@@ -310,11 +310,14 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                                   },
                                   child: AbsorbPointer(
                                     child: TextFormField(
-                                      decoration: AppInputStyles.textFieldDecoration(
-                                        label: "Sélectionner",
-                                      ).copyWith(
-                                        prefixIcon: const Icon(Icons.calendar_today),
-                                      ),
+                                      decoration:
+                                          AppInputStyles.textFieldDecoration(
+                                            label: "Sélectionner",
+                                          ).copyWith(
+                                            prefixIcon: const Icon(
+                                              Icons.calendar_today,
+                                            ),
+                                          ),
                                       controller: TextEditingController(
                                         text: formatDate(_dateFin),
                                       ),
@@ -337,9 +340,7 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                           decoration: BoxDecoration(
                             color: Colors.orange.shade50,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.orange.shade200,
-                            ),
+                            border: Border.all(color: Colors.orange.shade200),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,7 +370,10 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                                   return Chip(
                                     label: Text(product.nom),
                                     backgroundColor: Colors.white,
-                                    deleteIcon: const Icon(Icons.close, size: 16),
+                                    deleteIcon: const Icon(
+                                      Icons.close,
+                                      size: 16,
+                                    ),
                                     onDeleted: () {
                                       setState(() {
                                         _selectedProducts.remove(product);
@@ -390,57 +394,72 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                           onPressed: isSubmitting
                               ? null
                               : () async {
-                            if (!_formKey.currentState!.validate() ||
-                                _selectedProducts.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    "Veuillez remplir tous les champs et sélectionner au moins un produit",
-                                  ),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                              return;
-                            }
+                                  if (!_formKey.currentState!.validate() ||
+                                      _selectedProducts.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Veuillez remplir tous les champs et sélectionner au moins un produit",
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return;
+                                  }
 
-                            setState(() => isSubmitting = true);
+                                  setState(() => isSubmitting = true);
 
-                            final promo = PromotionEntity(
-                              nom: _nomController.text,
-                              tarif: double.tryParse(_tarifController.text) ?? 0.0,
-                              produits: _selectedProducts,
-                              dateDebut: _dateDebut!,
-                              dateFin: _dateFin!,
-                            );
+                                  final promo = PromotionEntity(
+                                    nom: _nomController.text,
+                                    tarif:
+                                        double.tryParse(
+                                          _tarifController.text,
+                                        ) ??
+                                        0.0,
+                                    produits: _selectedProducts,
+                                    dateDebut: _dateDebut!,
+                                    dateFin: _dateFin!,
+                                  );
 
-                            final result = await createPromotionUsecase.execute(promo);
+                                  final result = await createPromotionUsecase
+                                      .execute(promo);
 
-                            if (!mounted) return;
+                                  if (!mounted) return;
 
-                            result.fold(
-                                  (failure) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Erreur : ${failure.toString()}"),
-                                    backgroundColor: Colors.red,
-                                    duration: const Duration(seconds: 4),
-                                  ),
-                                );
-                                setState(() => isSubmitting = false);
-                              },
-                                  (success) {
-                                ref.read(promotionListNotifier.notifier).getPromotions();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Promotion créée avec succès !"),
-                                    backgroundColor: Colors.green,
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
-                                context.pop();
-                              },
-                            );
-                          },
+                                  result.fold(
+                                    (failure) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            "Erreur : ${failure.toString()}",
+                                          ),
+                                          backgroundColor: Colors.red,
+                                          duration: const Duration(seconds: 4),
+                                        ),
+                                      );
+                                      setState(() => isSubmitting = false);
+                                    },
+                                    (success) {
+                                      ref
+                                          .read(promotionListNotifier.notifier)
+                                          .getPromotions();
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            "Promotion créée avec succès !",
+                                          ),
+                                          backgroundColor: Colors.green,
+                                          duration: Duration(seconds: 2),
+                                        ),
+                                      );
+                                      context.pop();
+                                    },
+                                  );
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
                             foregroundColor: Colors.white,
@@ -451,27 +470,27 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                           ),
                           child: isSubmitting
                               ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
                               : const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.check_circle_outline, size: 20),
-                              SizedBox(width: 8),
-                              Text(
-                                "Créer la promotion",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.check_circle_outline, size: 20),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      "Créer la promotion",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     ],
@@ -545,7 +564,10 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                             },
                             decoration: InputDecoration(
                               hintText: "Rechercher un produit...",
-                              prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: Colors.grey.shade400,
+                              ),
                               filled: true,
                               fillColor: Colors.grey.shade50,
                               border: OutlineInputBorder(
@@ -566,177 +588,194 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                     Expanded(
                       child: filteredProducts.isEmpty
                           ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 64,
-                              color: Colors.grey.shade300,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "Aucun produit trouvé",
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                          : ListView.separated(
-                        padding: const EdgeInsets.all(20),
-                        itemCount: filteredProducts.length,
-                        separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final product = filteredProducts[index];
-                          final isSelected = _selectedProducts.contains(product);
-
-                          return InkWell(
-                            onTap: () {
-                              setState(() {
-                                if (isSelected) {
-                                  _selectedProducts.remove(product);
-                                } else {
-                                  _selectedProducts.add(product);
-                                }
-                              });
-                            },
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? Colors.orange.shade50
-                                    : Colors.grey.shade50,
-                                border: Border.all(
-                                  color: isSelected
-                                      ? Colors.orange
-                                      : Colors.grey.shade200,
-                                  width: isSelected ? 2 : 1,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // Image du produit
-                                  Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: Colors.grey.shade200,
-                                      ),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: product.imageUrl != null
-                                          ? Image.network(
-                                        product.imageUrl!,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) =>
-                                            Icon(
-                                              Icons.fastfood,
-                                              color: Colors.grey.shade400,
-                                              size: 30,
-                                            ),
-                                      )
-                                          : Icon(
-                                        Icons.fastfood,
-                                        color: Colors.grey.shade400,
-                                        size: 30,
-                                      ),
+                                  Icon(
+                                    Icons.search_off,
+                                    size: 64,
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    "Aucun produit trouvé",
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
-                                  // Informations du produit
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                ],
+                              ),
+                            )
+                          : ListView.separated(
+                              padding: const EdgeInsets.all(20),
+                              itemCount: filteredProducts.length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                final product = filteredProducts[index];
+                                final isSelected = _selectedProducts.contains(
+                                  product,
+                                );
+
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      if (isSelected) {
+                                        _selectedProducts.remove(product);
+                                      } else {
+                                        _selectedProducts.add(product);
+                                      }
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Colors.orange.shade50
+                                          : Colors.grey.shade50,
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? Colors.orange
+                                            : Colors.grey.shade200,
+                                        width: isSelected ? 2 : 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
                                       children: [
-                                        Text(
-                                          product.nom,
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.w600,
-                                            color: isSelected
-                                                ? Colors.orange.shade900
-                                                : Colors.black,
+                                        // Image du produit
+                                        Container(
+                                          width: 60,
+                                          height: 60,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            child: product.imageUrl != null
+                                                ? Image.network(
+                                                    product.imageUrl!,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder:
+                                                        (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) => Icon(
+                                                          Icons.fastfood,
+                                                          color: Colors
+                                                              .grey
+                                                              .shade400,
+                                                          size: 30,
+                                                        ),
+                                                  )
+                                                : Icon(
+                                                    Icons.fastfood,
+                                                    color: Colors.grey.shade400,
+                                                    size: 30,
+                                                  ),
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          product.description,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey.shade600,
+                                        const SizedBox(width: 12),
+                                        // Informations du produit
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                product.nom,
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.bold
+                                                      : FontWeight.w600,
+                                                  color: isSelected
+                                                      ? Colors.orange.shade900
+                                                      : Colors.black,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                product.description,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey.shade600,
+                                                ),
+                                              ),
+                                            ],
                                           ),
+                                        ),
+                                        // Prix
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? Colors.orange
+                                                : Colors.grey.shade200,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "${product.prix.toStringAsFixed(0)} F",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: isSelected
+                                                  ? Colors.white
+                                                  : Colors.grey.shade700,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        // Checkbox
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? Colors.orange
+                                                : Colors.transparent,
+                                            border: Border.all(
+                                              color: isSelected
+                                                  ? Colors.orange
+                                                  : Colors.grey.shade400,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              6,
+                                            ),
+                                          ),
+                                          child: isSelected
+                                              ? const Icon(
+                                                  Icons.check,
+                                                  color: Colors.white,
+                                                  size: 16,
+                                                )
+                                              : null,
                                         ),
                                       ],
                                     ),
                                   ),
-                                  // Prix
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? Colors.orange
-                                          : Colors.grey.shade200,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      "${product.prix.toStringAsFixed(0)} F",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.grey.shade700,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  // Checkbox
-                                  Container(
-                                    width: 24,
-                                    height: 24,
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? Colors.orange
-                                          : Colors.transparent,
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? Colors.orange
-                                            : Colors.grey.shade400,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: isSelected
-                                        ? const Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      size: 16,
-                                    )
-                                        : null,
-                                  ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
                   ],
                 ),

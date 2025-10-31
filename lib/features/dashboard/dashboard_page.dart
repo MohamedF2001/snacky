@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:async';
-
-import '../../../../const/app_colors.dart';
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
 import 'package:snacky/features/categories/presentation/providers/categorie_provider.dart';
 import 'package:snacky/features/orders/presentation/providers/order_provider.dart';
@@ -94,22 +91,30 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         .fold<double>(0, (sum, order) => sum + order.coutTotal);
 
     // Animer les compteurs une seule fois quand les données arrivent
-    if (!categorieState.isLoading && categorieState.categories.isNotEmpty && _categoriesCount == 0) {
+    if (!categorieState.isLoading &&
+        categorieState.categories.isNotEmpty &&
+        _categoriesCount == 0) {
       _animateCounter(categorieState.categories.length, (value) {
         if (mounted) setState(() => _categoriesCount = value);
       });
     }
-    if (!productState.isLoading && productState.products.isNotEmpty && _productsCount == 0) {
+    if (!productState.isLoading &&
+        productState.products.isNotEmpty &&
+        _productsCount == 0) {
       _animateCounter(productState.products.length, (value) {
         if (mounted) setState(() => _productsCount = value);
       });
     }
-    if (!orderState.isLoading && orderState.orders.isNotEmpty && _ordersCount == 0) {
+    if (!orderState.isLoading &&
+        orderState.orders.isNotEmpty &&
+        _ordersCount == 0) {
       _animateCounter(orderState.orders.length, (value) {
         if (mounted) setState(() => _ordersCount = value);
       });
     }
-    if (!promotionState.isLoading && promotionState.promotions.isNotEmpty && _promotionsCount == 0) {
+    if (!promotionState.isLoading &&
+        promotionState.promotions.isNotEmpty &&
+        _promotionsCount == 0) {
       _animateCounter(promotionState.promotions.length, (value) {
         if (mounted) setState(() => _promotionsCount = value);
       });
@@ -127,7 +132,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       });
     }
 
-    final isLoading = categorieState.isLoading ||
+    final isLoading =
+        categorieState.isLoading ||
         productState.isLoading ||
         orderState.isLoading ||
         promotionState.isLoading;
@@ -151,10 +157,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 color: Colors.grey.shade600,
               ),
             ),
-            Text(
-              " / ",
-              style: TextStyle(color: Colors.grey.shade400),
-            ),
+            Text(" / ", style: TextStyle(color: Colors.grey.shade400)),
             const Text(
               "Statistiques",
               style: TextStyle(
@@ -183,8 +186,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           size: 30.0,
         ),
       )
-          : */
-      RefreshIndicator(
+          : */ RefreshIndicator(
         onRefresh: () async => _loadData(),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -195,18 +197,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               // En-tête
               const Text(
                 "Vue d'ensemble",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
                 "Statistiques en temps réel de votre application",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 32),
 
@@ -269,16 +265,16 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           const SizedBox(height: 4),
                           Text(
                             "Commandes terminées uniquement",
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(fontSize: 13, color: Colors.white),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -317,7 +313,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       icon: Icons.category,
                       color: Colors.purple,
                       gradient: LinearGradient(
-                        colors: [Colors.purple.shade400, Colors.purple.shade600],
+                        colors: [
+                          Colors.purple.shade400,
+                          Colors.purple.shade600,
+                        ],
                       ),
                     ),
                   ),
@@ -329,7 +328,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       icon: Icons.fastfood,
                       color: Colors.orange,
                       gradient: LinearGradient(
-                        colors: [Colors.orange.shade400, Colors.orange.shade600],
+                        colors: [
+                          Colors.orange.shade400,
+                          Colors.orange.shade600,
+                        ],
                       ),
                     ),
                   ),
@@ -444,11 +446,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ),
                 child: Icon(icon, color: Colors.white, size: 28),
               ),
-              Icon(
-                Icons.trending_up,
-                color: Colors.white,
-                size: 20,
-              ),
+              Icon(Icons.trending_up, color: Colors.white, size: 20),
             ],
           ),
           const SizedBox(height: 16),
@@ -493,10 +491,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 24),
           SizedBox(height: 300, child: child),
@@ -558,7 +553,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               sections: data.entries.map((entry) {
                 final color = colors[entry.key] ?? Colors.grey;
                 final total = data.values.reduce((a, b) => a + b);
-                final percentage = ((entry.value / total) * 100).toStringAsFixed(1);
+                final percentage = ((entry.value / total) * 100)
+                    .toStringAsFixed(1);
 
                 return PieChartSectionData(
                   value: entry.value.toDouble(),
@@ -586,7 +582,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               final color = colors[entry.key] ?? Colors.grey;
               final label = labels[entry.key] ?? entry.key;
               final total = data.values.reduce((a, b) => a + b);
-              final percentage = ((entry.value / total) * 100).toStringAsFixed(1);
+              final percentage = ((entry.value / total) * 100).toStringAsFixed(
+                1,
+              );
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -634,13 +632,30 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   }
 
   Widget _buildBarChart(List<Map<String, dynamic>> data) {
-    final monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
-      'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+    final monthNames = [
+      'Jan',
+      'Fév',
+      'Mar',
+      'Avr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Aoû',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Déc',
+    ];
 
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: data.map((d) => d['count'] as int).reduce((a, b) => a > b ? a : b).toDouble() + 5,
+        maxY:
+            data
+                .map((d) => d['count'] as int)
+                .reduce((a, b) => a > b ? a : b)
+                .toDouble() +
+            5,
         barTouchData: BarTouchData(enabled: true),
         titlesData: FlTitlesData(
           show: true,
@@ -673,18 +688,19 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               },
             ),
           ),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         gridData: FlGridData(
           show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: Colors.grey.shade200,
-              strokeWidth: 1,
-            );
+            return FlLine(color: Colors.grey.shade200, strokeWidth: 1);
           },
         ),
         borderData: FlBorderData(show: false),
@@ -729,10 +745,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           drawVerticalLine: false,
           horizontalInterval: 10000,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: Colors.grey.shade200,
-              strokeWidth: 1,
-            );
+            return FlLine(color: Colors.grey.shade200, strokeWidth: 1);
           },
         ),
         titlesData: FlTitlesData(
@@ -743,7 +756,20 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               reservedSize: 30,
               interval: 1,
               getTitlesWidget: (value, meta) {
-                const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+                const months = [
+                  'Jan',
+                  'Fév',
+                  'Mar',
+                  'Avr',
+                  'Mai',
+                  'Jun',
+                  'Jul',
+                  'Aoû',
+                  'Sep',
+                  'Oct',
+                  'Nov',
+                  'Déc',
+                ];
                 if (value.toInt() >= 0 && value.toInt() < months.length) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 8),
@@ -769,8 +795,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               },
             ),
           ),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         borderData: FlBorderData(show: false),
         lineBarsData: [

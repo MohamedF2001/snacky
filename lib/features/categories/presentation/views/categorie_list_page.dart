@@ -46,44 +46,41 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
     final deleteState = ref.watch(deleteCategoryProvider);
 
     // ✅ Écouter les changements de l'état de suppression
-    ref.listen<DeleteCategoryState>(
-      deleteCategoryProvider,
-          (previous, next) {
-        if (next.success) {
-          // ✅ Recharger la liste après suppression réussie
-          ref.read(categorieListNotifier.notifier).getCategories();
+    ref.listen<DeleteCategoryState>(deleteCategoryProvider, (previous, next) {
+      if (next.success) {
+        // ✅ Recharger la liste après suppression réussie
+        ref.read(categorieListNotifier.notifier).getCategories();
 
-          // ✅ Réinitialiser l'état de suppression
-          ref.read(deleteCategoryProvider.notifier).reset();
+        // ✅ Réinitialiser l'état de suppression
+        ref.read(deleteCategoryProvider.notifier).reset();
 
-          // ✅ Afficher un dialogue de succès
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return SuccessDialog(
-                message: "Catégorie supprimée avec succès ! ✅",
-                onOk: () {
-                  Navigator.pop(context);
-                },
-              );
-            },
-          );
-        } else if (next.error != null) {
-          // ✅ Afficher l'erreur si la suppression échoue
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Erreur : ${next.error.toString()}"),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
-          );
+        // ✅ Afficher un dialogue de succès
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return SuccessDialog(
+              message: "Catégorie supprimée avec succès ! ✅",
+              onOk: () {
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
+      } else if (next.error != null) {
+        // ✅ Afficher l'erreur si la suppression échoue
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erreur : ${next.error.toString()}"),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
 
-          // ✅ Réinitialiser l'erreur
-          ref.read(deleteCategoryProvider.notifier).clearError();
-        }
-      },
-    );
+        // ✅ Réinitialiser l'erreur
+        ref.read(deleteCategoryProvider.notifier).clearError();
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -124,7 +121,10 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
   }
 
   // ✅ Construire le corps de la page selon l'état
-  Widget _buildBody(CategorieListState categorieState, DeleteCategoryState deleteState) {
+  Widget _buildBody(
+    CategorieListState categorieState,
+    DeleteCategoryState deleteState,
+  ) {
     // Chargement initial
     if (categorieState.isLoading && categorieState.categories.isEmpty) {
       return const Center(
@@ -193,7 +193,8 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
         mainAxisSpacing: 12,
         childAspectRatio: 3 / 2.5,
       ),
-      itemCount: categorieState.categories.length +
+      itemCount:
+          categorieState.categories.length +
           (categorieState.isLoading ? 1 : 0), // +1 pour le loader si chargement
       itemBuilder: (context, index) {
         // ✅ Afficher un loader à la fin pendant le chargement de plus d'items
@@ -225,7 +226,7 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
   }
 
   // ✅ Boîte de dialogue de confirmation améliorée
-  void _confirmDelete(BuildContext context, String id) {
+  /* void _confirmDelete(BuildContext context, String id) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -261,5 +262,5 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
         ],
       ),
     );
-  }
+  } */
 }
