@@ -5,9 +5,9 @@ import 'package:snacky/virtual.dart';
 
 import 'const/app_theme.dart';
 
-/* void main() {
-  runApp(const MyApp());
-} */
+// 🎯 Variable de démonstration
+const bool demo = true; // Mettez à false pour désactiver le mode démo
+
 void main() {
   runApp(const ProviderScope(child: FastFoodApp()));
 }
@@ -20,9 +20,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      // ),
       theme: AppTheme.lightTheme, // 🌈 applique ton thème global ici
       home: Virtual(),
       //const MyHomePage(title: 'Flutter Demo Home Page'),

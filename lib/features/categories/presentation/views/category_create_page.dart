@@ -6,6 +6,7 @@ import 'package:snacky/features/categories/domain/entities/categorie_entity.dart
 import 'package:snacky/features/categories/presentation/widgets/succes_dialog.dart';
 
 import '../../../../const/app_input_style.dart';
+import 'package:snacky/main.dart'; // ...existing code... (import pour la variable demo)
 
 class CategoryCreatePage extends ConsumerStatefulWidget {
   const CategoryCreatePage({super.key});
@@ -43,14 +44,18 @@ class _CategoryCreatePageState extends ConsumerState<CategoryCreatePage> {
                 children: [
                   TextFormField(
                     controller: _nomController,
-                    decoration: AppInputStyles.textFieldDecoration(label: "Nom"),
+                    decoration: AppInputStyles.textFieldDecoration(
+                      label: "Nom",
+                    ),
                     validator: (value) =>
                         value == null || value.isEmpty ? "Champ requis" : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _descriptionController,
-                    decoration: AppInputStyles.textFieldDecoration(label: "Description"),
+                    decoration: AppInputStyles.textFieldDecoration(
+                      label: "Description",
+                    ),
                     maxLines: 5,
                     validator: (value) =>
                         value == null || value.isEmpty ? "Champ requis" : null,
@@ -73,12 +78,18 @@ class _CategoryCreatePageState extends ConsumerState<CategoryCreatePage> {
                       ),
                       onPressed: createState.isLoading
                           ? null
-                          : () => _submitForm(createNotifier),
+                          : () => _submit(
+                              createNotifier,
+                            ), // <-- modifié pour gérer le mode demo
                       child: createState.isLoading
                           ? const SizedBox(
                               height: 20,
                               width: 20,
-                              child: Center(child: CircularProgressIndicator(color: Colors.orange)),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.orange,
+                                ),
+                              ),
                             )
                           : const Text("Ajouter"),
                     ),
@@ -89,6 +100,65 @@ class _CategoryCreatePageState extends ConsumerState<CategoryCreatePage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _submit(CreateCategoryNotifier createNotifier) async {
+    // Si mode démo actif, on affiche une popup et on n'appelle pas la création réelle
+    if (demo) {
+      _showDemoDialog();
+      return;
+    }
+    // Sinon on procède à la création
+    _submitForm(createNotifier);
+  }
+
+  void _showDemoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.info, color: Colors.blue.shade700, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Mode Démo",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text(
+            "Cette fonctionnalité n'est pas disponible en mode démo. "
+            "Veuillez désactiver le mode démo pour ajouter une catégorie.",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Fermer",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -106,13 +176,6 @@ class _CategoryCreatePageState extends ConsumerState<CategoryCreatePage> {
       await ref.read(categorieListNotifier.notifier).getCategories();
 
       if (mounted) {
-        /* ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Catégorie ajoutée avec succès"),
-            backgroundColor: Colors.green,
-          ),
-        );
-        context.go('/categories'); */
         showDialog(
           context: context,
           barrierDismissible: false, // empêche de fermer en cliquant dehors

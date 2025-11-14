@@ -5,6 +5,7 @@ import 'package:snacky/features/orders/domain/entities/order_entity.dart';
 import 'package:snacky/features/orders/presentation/providers/order_provider.dart';
 import 'package:snacky/features/products/domain/entities/product_entity.dart';
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
+import 'package:snacky/main.dart'; // 👈 Importez main.dart pour accéder à la variable demo
 
 import '../../../../const/app_input_style.dart';
 
@@ -40,7 +41,7 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
     double total = 0;
     for (var item in _produitsCommandes) {
       final product = produits.firstWhere(
-            (p) => p.id == item["produitId"],
+        (p) => p.id == item["produitId"],
         orElse: () => ProductEntity(
           id: null,
           nom: "Inconnu",
@@ -56,8 +57,9 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
   }
 
   void _ajouterProduit(String produitId) {
-    final exists =
-    _produitsCommandes.any((item) => item["produitId"] == produitId);
+    final exists = _produitsCommandes.any(
+      (item) => item["produitId"] == produitId,
+    );
 
     if (exists) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,10 +73,7 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
     }
 
     setState(() {
-      _produitsCommandes.add({
-        "produitId": produitId,
-        "quantite": 1,
-      });
+      _produitsCommandes.add({"produitId": produitId, "quantite": 1});
     });
   }
 
@@ -92,6 +91,18 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
   }
 
   Future<void> _submit() async {
+    // 🎯 Vérifier si on est en mode démo
+    if (demo) {
+      _showDemoDialog();
+      return;
+    }
+
+    // Sinon, procéder à la création de la commande normalement
+    _createOrder();
+  }
+
+  /// Crée la commande (fonction originale de _submit)
+  Future<void> _createOrder() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_produitsCommandes.isEmpty) {
@@ -127,10 +138,10 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
     final produits = _produitsCommandes
         .map(
           (item) => OrderProductEntity(
-        produit: item["produitId"],
-        quantite: item["quantite"],
-      ),
-    )
+            produit: item["produitId"],
+            quantite: item["quantite"],
+          ),
+        )
         .toList();
 
     final order = OrderEntity(
@@ -171,6 +182,56 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
     }
   }
 
+  /// Affiche une popup indiquant que l'on est en mode démo
+  void _showDemoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.info, color: Colors.blue.shade700, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Mode Démo",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text(
+            "Cette fonctionnalité n'est pas disponible en mode démo. "
+            "Veuillez désactiver le mode démo pour créer une commande.",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Fermer",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final produitsState = ref.watch(productListNotifier);
@@ -197,13 +258,18 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: ElevatedButton.icon(
-              onPressed: createState.isLoading ? null : _submit,
+              onPressed: createState.isLoading
+                  ? null
+                  : _submit, // ✅ Utilise _submit au lieu de _createOrder
               icon: const Icon(Icons.check_circle),
               label: const Text("Créer la commande"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -214,53 +280,53 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
       ),
       body: createState.isLoading
           ? const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(color: Colors.orange),
-            SizedBox(height: 16),
-            Text("Création de la commande..."),
-          ],
-        ),
-      )
-          : Padding(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Colonne de gauche : Produits et total
-                  Expanded(
-                    flex: 2,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildProduitsCard(produitsState),
-                          const SizedBox(height: 16),
-                          _buildCoutTotalCard(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 24),
-                  // Colonne de droite : Informations client et type
-                  Expanded(
-                    flex: 1,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildClientCard(),
-                          const SizedBox(height: 16),
-                          _buildTypeCommandeCard(),
-                        ],
-                      ),
-                    )
-                  ),
+                  CircularProgressIndicator(color: Colors.orange),
+                  SizedBox(height: 16),
+                  Text("Création de la commande..."),
                 ],
               ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Colonne de gauche : Produits et total
+                    Expanded(
+                      flex: 2,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            _buildProduitsCard(produitsState),
+                            const SizedBox(height: 16),
+                            _buildCoutTotalCard(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    // Colonne de droite : Informations client et type
+                    Expanded(
+                      flex: 1,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            _buildClientCard(),
+                            const SizedBox(height: 16),
+                            _buildTypeCommandeCard(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
     );
   }
 
@@ -285,7 +351,11 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
           children: [
             Row(
               children: [
-                Icon(Icons.person_outline, color: Colors.grey.shade600, size: 22),
+                Icon(
+                  Icons.person_outline,
+                  color: Colors.grey.shade600,
+                  size: 22,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   "Informations Client",
@@ -302,16 +372,18 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
               controller: _nomClientController,
               decoration: AppInputStyles.textFieldDecoration(
                 label: "Nom du client *",
-                icon: Icons.person_outline,),
+                icon: Icons.person_outline,
+              ),
               validator: (val) =>
-              val == null || val.isEmpty ? "Le nom est requis" : null,
+                  val == null || val.isEmpty ? "Le nom est requis" : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _telephoneController,
               decoration: AppInputStyles.textFieldDecoration(
                 label: "Téléphone *",
-                icon: Icons.phone_outlined,),
+                icon: Icons.phone_outlined,
+              ),
               keyboardType: TextInputType.phone,
               validator: (val) {
                 if (val == null || val.isEmpty) {
@@ -350,7 +422,11 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
           children: [
             Row(
               children: [
-                Icon(Icons.restaurant_menu, color: Colors.grey.shade600, size: 22),
+                Icon(
+                  Icons.restaurant_menu,
+                  color: Colors.grey.shade600,
+                  size: 22,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   "Type de Commande",
@@ -373,7 +449,9 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: _surPlace ? Colors.orange.shade50 : Colors.grey.shade50,
+                  color: _surPlace
+                      ? Colors.orange.shade50
+                      : Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: _surPlace ? Colors.orange : Colors.grey.shade300,
@@ -395,7 +473,9 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
                             "Sur place",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: _surPlace ? Colors.orange.shade700 : Colors.black,
+                              color: _surPlace
+                                  ? Colors.orange.shade700
+                                  : Colors.black,
                             ),
                           ),
                           Text(
@@ -427,7 +507,8 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
                 controller: _numeroTableController,
                 decoration: AppInputStyles.textFieldDecoration(
                   label: "Numéro de table *",
-                  icon: Icons.pin,),
+                  icon: Icons.pin,
+                ),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -446,7 +527,9 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: _livraison ? Colors.green.shade50 : Colors.grey.shade50,
+                  color: _livraison
+                      ? Colors.green.shade50
+                      : Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: _livraison ? Colors.green : Colors.grey.shade300,
@@ -468,7 +551,9 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
                             "Livraison",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: _livraison ? Colors.green.shade700 : Colors.black,
+                              color: _livraison
+                                  ? Colors.green.shade700
+                                  : Colors.black,
                             ),
                           ),
                           Text(
@@ -523,7 +608,11 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
           children: [
             Row(
               children: [
-                Icon(Icons.shopping_cart, color: Colors.grey.shade600, size: 22),
+                Icon(
+                  Icons.shopping_cart,
+                  color: Colors.grey.shade600,
+                  size: 22,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   "Produits",
@@ -549,8 +638,11 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
                   padding: const EdgeInsets.all(32),
                   child: Column(
                     children: [
-                      Icon(Icons.inventory_2_outlined,
-                          size: 48, color: Colors.grey.shade400),
+                      Icon(
+                        Icons.inventory_2_outlined,
+                        size: 48,
+                        color: Colors.grey.shade400,
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         "Aucun produit disponible",
@@ -561,189 +653,198 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
                 ),
               )
             else ...[
-                DropdownButtonFormField<String>(
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    labelText: "Ajouter un produit",
-                    prefixIcon: const Icon(Icons.add_shopping_cart),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Colors.orange, width: 2),
+              DropdownButtonFormField<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: "Ajouter un produit",
+                  prefixIcon: const Icon(Icons.add_shopping_cart),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(
+                      color: Colors.orange,
+                      width: 2,
                     ),
                   ),
-                  items: productsState.products
-                      .map<DropdownMenuItem<String>>((p) {
-                    return DropdownMenuItem<String>(
-                      value: p.id!,
+                ),
+                items: productsState.products.map<DropdownMenuItem<String>>((
+                  p,
+                ) {
+                  return DropdownMenuItem<String>(
+                    value: p.id!,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(p.nom, overflow: TextOverflow.ellipsis),
+                        ),
+                        Text(
+                          "${p.prix?.toStringAsFixed(0)} FCFA",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) _ajouterProduit(value);
+                },
+              ),
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 16),
+              if (_produitsCommandes.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.shopping_basket_outlined,
+                          size: 48,
+                          color: Colors.grey.shade400,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Aucun produit ajouté",
+                          style: TextStyle(color: Colors.grey.shade600),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                Column(
+                  children: _produitsCommandes.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final item = entry.value;
+                    final produit = productsState.products.firstWhere(
+                      (p) => p.id == item["produitId"],
+                      orElse: () => ProductEntity(
+                        id: item["produitId"],
+                        nom: "Produit inconnu",
+                        description: "",
+                        prix: 0,
+                        imageUrl: null,
+                        categorie: null,
+                      ),
+                    );
+
+                    final prixUnitaire = produit.prix ?? 0;
+                    final quantite = item["quantite"];
+                    final sousTotal = prixUnitaire * quantite;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.orange.shade200),
+                      ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
+                          CircleAvatar(
+                            backgroundColor: Colors.orange,
+                            radius: 24,
                             child: Text(
-                              p.nom,
-                              overflow: TextOverflow.ellipsis,
+                              '$quantite',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
-                          Text(
-                            "${p.prix?.toStringAsFixed(0)} FCFA",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  produit.nom,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  "${prixUnitaire.toStringAsFixed(0)} FCFA × $quantite = ${sousTotal.toStringAsFixed(0)} FCFA",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.remove_circle,
+                                  color: quantite > 1
+                                      ? Colors.orange
+                                      : Colors.grey.shade400,
+                                ),
+                                onPressed: () {
+                                  if (quantite > 1) {
+                                    _changerQuantite(index, quantite - 1);
+                                  }
+                                },
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: Colors.orange),
+                                ),
+                                child: Text(
+                                  '$quantite',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.add_circle,
+                                  color: Colors.orange,
+                                ),
+                                onPressed: () =>
+                                    _changerQuantite(index, quantite + 1),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () => _supprimerProduit(index),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    if (value != null) _ajouterProduit(value);
-                  },
                 ),
-                const SizedBox(height: 16),
-                const Divider(),
-                const SizedBox(height: 16),
-                if (_produitsCommandes.isEmpty)
-                  Container(
-                    padding: const EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          Icon(Icons.shopping_basket_outlined,
-                              size: 48, color: Colors.grey.shade400),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Aucun produit ajouté",
-                            style: TextStyle(color: Colors.grey.shade600),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                else
-                  Column(
-                    children:
-                    _produitsCommandes.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final item = entry.value;
-                      final produit = productsState.products.firstWhere(
-                            (p) => p.id == item["produitId"],
-                        orElse: () => ProductEntity(
-                          id: item["produitId"],
-                          nom: "Produit inconnu",
-                          description: "",
-                          prix: 0,
-                          imageUrl: null,
-                          categorie: null,
-                        ),
-                      );
-
-                      final prixUnitaire = produit.prix ?? 0;
-                      final quantite = item["quantite"];
-                      final sousTotal = prixUnitaire * quantite;
-
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.orange.shade200),
-                        ),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.orange,
-                              radius: 24,
-                              child: Text(
-                                '$quantite',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    produit.nom,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "${prixUnitaire.toStringAsFixed(0)} FCFA × $quantite = ${sousTotal.toStringAsFixed(0)} FCFA",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.grey.shade700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.remove_circle,
-                                    color: quantite > 1
-                                        ? Colors.orange
-                                        : Colors.grey.shade400,
-                                  ),
-                                  onPressed: () {
-                                    if (quantite > 1) {
-                                      _changerQuantite(index, quantite - 1);
-                                    }
-                                  },
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: Colors.orange),
-                                  ),
-                                  child: Text(
-                                    '$quantite',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.add_circle,
-                                      color: Colors.orange),
-                                  onPressed: () =>
-                                      _changerQuantite(index, quantite + 1),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.red),
-                                  onPressed: () => _supprimerProduit(index),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-              ],
+            ],
           ],
         ),
       ),
@@ -771,8 +872,11 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
         children: [
           Row(
             children: [
-              Icon(Icons.shopping_cart_checkout,
-                  color: Colors.orange.shade700, size: 28),
+              Icon(
+                Icons.shopping_cart_checkout,
+                color: Colors.orange.shade700,
+                size: 28,
+              ),
               const SizedBox(width: 12),
               Text(
                 "Coût Total",
@@ -805,4 +909,3 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
     super.dispose();
   }
 }
-

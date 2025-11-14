@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:snacky/const/app_colors.dart';
 import 'package:snacky/const/app_style.dart';
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
+import 'package:snacky/main.dart'; // 👈 Importez main.dart pour accéder à la variable demo
 
 class DetailsProductPage extends ConsumerStatefulWidget {
   final String produitId;
@@ -33,6 +34,12 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
   }
 
   Future<void> _showDeleteConfirmation() async {
+    // 🎯 Vérifier si on est en mode démo
+    if (demo) {
+      _showDemoDialog();
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -45,7 +52,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
         ),
         content: Text(
           'Êtes-vous sûr de vouloir supprimer "${widget.productNom}" ?\n'
-              'Cette action est irréversible.',
+          'Cette action est irréversible.',
         ),
         actions: [
           TextButton(
@@ -96,6 +103,56 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
     }
   }
 
+  /// Affiche une popup indiquant que l'on est en mode démo
+  void _showDemoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.info, color: Colors.blue.shade700, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Mode Démo",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text(
+            "Cette fonctionnalité n'est pas disponible en mode démo. "
+            "Veuillez désactiver le mode démo pour modifier ou supprimer un produit.",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Fermer",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(detailProductNotifier(widget.produitId));
@@ -113,81 +170,91 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                 // Bouton Modifier dans l'AppBar
                 IconButton(
                   icon: const Icon(Icons.edit, color: AppColors.darkBlue),
-                  onPressed: () {
-                    context.push('/products/edit/${widget.produitId}');
-                  },
+                  onPressed: demo
+                      ? _showDemoDialog
+                      : () {
+                          context.push('/products/edit/${widget.produitId}');
+                        },
                   tooltip: 'Modifier',
                 ),
                 // Bouton Supprimer dans l'AppBar
                 IconButton(
                   icon: deleteState.isLoading
                       ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.orange,
-                      strokeWidth: 2,
-                    ),
-                  )
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.orange,
+                            strokeWidth: 2,
+                          ),
+                        )
                       : const Icon(Icons.delete, color: Colors.red),
-                  onPressed: deleteState.isLoading ? null : _showDeleteConfirmation,
+                  onPressed: deleteState.isLoading
+                      ? null
+                      : _showDeleteConfirmation,
                   tooltip: 'Supprimer',
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
       body: deleteState.isLoading
           ? const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(color: Colors.orange),
-            SizedBox(height: 16),
-            Text('Suppression en cours...'),
-          ],
-        ),
-      )
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: Colors.orange),
+                  SizedBox(height: 16),
+                  Text('Suppression en cours...'),
+                ],
+              ),
+            )
           : productState.isLoading
           ? const Center(
-        child: SpinKitThreeBounce(
-            color: AppColors.accentOrange, size: 30.0),
-      )
+              child: SpinKitThreeBounce(
+                color: AppColors.accentOrange,
+                size: 30.0,
+              ),
+            )
           : productState.error != null
           ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline,
-                size: 64, color: AppColors.primaryRed),
-            const SizedBox(height: 16),
-            Text("Erreur : ${productState.error}"),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                ref
-                    .read(detailProductNotifier(widget.produitId)
-                    .notifier)
-                    .getProductById(widget.produitId);
-              },
-              child: const Text('Réessayer'),
-            ),
-          ],
-        ),
-      )
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: AppColors.primaryRed,
+                  ),
+                  const SizedBox(height: 16),
+                  Text("Erreur : ${productState.error}"),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref
+                          .read(
+                            detailProductNotifier(widget.produitId).notifier,
+                          )
+                          .getProductById(widget.produitId);
+                    },
+                    child: const Text('Réessayer'),
+                  ),
+                ],
+              ),
+            )
           : LayoutBuilder(
-        builder: (context, constraints) {
-          // Responsive: deux colonnes pour les écrans larges
-          final isWideScreen = constraints.maxWidth > 900;
+              builder: (context, constraints) {
+                // Responsive: deux colonnes pour les écrans larges
+                final isWideScreen = constraints.maxWidth > 900;
 
-          if (isWideScreen) {
-            return _buildTwoColumnLayout(productState);
-          } else {
-            return _buildSingleColumnLayout(productState);
-          }
-        },
-      ),
+                if (isWideScreen) {
+                  return _buildTwoColumnLayout(productState);
+                } else {
+                  return _buildSingleColumnLayout(productState);
+                }
+              },
+            ),
     );
   }
 
@@ -246,61 +313,54 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
         borderRadius: BorderRadius.circular(16),
         child: productState.product?.imageUrl != null
             ? Image.network(
-          productState.product!.imageUrl!,
-          height: 500,
-          width: double.infinity,
-          fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) {
-              return child;
-            }
-            return Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
+                productState.product!.imageUrl!,
                 height: 500,
                 width: double.infinity,
-                color: Colors.white,
-              ),
-            );
-          },
-          errorBuilder: (context, error, stackTrace) => Container(
-            height: 500,
-            width: double.infinity,
-            color: Colors.grey[300],
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.fastfood,
-                  size: 80,
-                  color: Colors.grey,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      height: 500,
+                      width: double.infinity,
+                      color: Colors.white,
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) => Container(
+                  height: 500,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.fastfood, size: 80, color: Colors.grey),
+                      SizedBox(height: 12),
+                      Text(
+                        'Image non disponible',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 12),
-                Text(
-                  'Image non disponible',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
-        )
+              )
             : Container(
-          height: 500,
-          width: double.infinity,
-          color: Colors.grey[300],
-          child: const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.fastfood, size: 80, color: Colors.grey),
-              SizedBox(height: 12),
-              Text(
-                'Aucune image',
-                style: TextStyle(color: Colors.grey),
+                height: 500,
+                width: double.infinity,
+                color: Colors.grey[300],
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.fastfood, size: 80, color: Colors.grey),
+                    SizedBox(height: 12),
+                    Text('Aucune image', style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -363,7 +423,8 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
               icon: Icons.description,
               iconColor: Colors.blue,
               title: "Description",
-              content: productState.product?.description ?? 'Aucune description',
+              content:
+                  productState.product?.description ?? 'Aucune description',
             ),
             const SizedBox(height: 24),
 
@@ -501,9 +562,11 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
             // Bouton Modifier
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () {
-                  context.push('/products/edit/${widget.produitId}');
-                },
+                onPressed: demo
+                    ? _showDemoDialog
+                    : () {
+                        context.push('/products/edit/${widget.produitId}');
+                      },
                 icon: const Icon(Icons.edit),
                 label: const Text("Modifier"),
                 style: ElevatedButton.styleFrom(

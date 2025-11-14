@@ -8,6 +8,7 @@ import 'package:snacky/features/products/domain/entities/product_entity.dart';
 
 import '../../../../const/app_input_style.dart';
 import '../../../products/presentation/providers/product_provider.dart';
+import 'package:snacky/main.dart'; // 👈 Import pour accéder à la variable demo
 
 class CreatePromotionPage extends ConsumerStatefulWidget {
   const CreatePromotionPage({super.key});
@@ -55,6 +56,121 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
     return products.where((product) {
       return product.nom.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
+  }
+
+  /// Méthode appelée par le bouton : respecte le mode demo
+  Future<void> _submit() async {
+    if (demo) {
+      _showDemoDialog();
+      return;
+    }
+    await _createPromotion();
+  }
+
+  /// Contient la logique originale de création
+  Future<void> _createPromotion() async {
+    if (!_formKey.currentState!.validate() || _selectedProducts.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Veuillez remplir tous les champs et sélectionner au moins un produit",
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => isSubmitting = true);
+
+    final promo = PromotionEntity(
+      nom: _nomController.text,
+      tarif: double.tryParse(_tarifController.text) ?? 0.0,
+      produits: _selectedProducts,
+      dateDebut: _dateDebut!,
+      dateFin: _dateFin!,
+    );
+
+    // Utilise le provider comme avant
+    final createPromotionUsecase = ref.read(createPromotionProvider);
+
+    final result = await createPromotionUsecase.execute(promo);
+
+    if (!mounted) return;
+
+    result.fold(
+      (failure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erreur : ${failure.toString()}"),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+        setState(() => isSubmitting = false);
+      },
+      (success) {
+        ref.read(promotionListNotifier.notifier).getPromotions();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Promotion créée avec succès !"),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        context.pop();
+      },
+    );
+  }
+
+  /// Popup mode demo
+  void _showDemoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.info, color: Colors.blue.shade700, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Mode Démo",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text(
+            "Cette fonctionnalité n'est pas disponible en mode démo. "
+            "Veuillez désactiver le mode démo pour créer une promotion.",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Fermer",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -393,73 +509,7 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
                         child: ElevatedButton(
                           onPressed: isSubmitting
                               ? null
-                              : () async {
-                                  if (!_formKey.currentState!.validate() ||
-                                      _selectedProducts.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          "Veuillez remplir tous les champs et sélectionner au moins un produit",
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  setState(() => isSubmitting = true);
-
-                                  final promo = PromotionEntity(
-                                    nom: _nomController.text,
-                                    tarif:
-                                        double.tryParse(
-                                          _tarifController.text,
-                                        ) ??
-                                        0.0,
-                                    produits: _selectedProducts,
-                                    dateDebut: _dateDebut!,
-                                    dateFin: _dateFin!,
-                                  );
-
-                                  final result = await createPromotionUsecase
-                                      .execute(promo);
-
-                                  if (!mounted) return;
-
-                                  result.fold(
-                                    (failure) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            "Erreur : ${failure.toString()}",
-                                          ),
-                                          backgroundColor: Colors.red,
-                                          duration: const Duration(seconds: 4),
-                                        ),
-                                      );
-                                      setState(() => isSubmitting = false);
-                                    },
-                                    (success) {
-                                      ref
-                                          .read(promotionListNotifier.notifier)
-                                          .getPromotions();
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            "Promotion créée avec succès !",
-                                          ),
-                                          backgroundColor: Colors.green,
-                                          duration: Duration(seconds: 2),
-                                        ),
-                                      );
-                                      context.pop();
-                                    },
-                                  );
-                                },
+                              : _submit, // <-- utilise _submit qui respecte le mode demo
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
                             foregroundColor: Colors.white,

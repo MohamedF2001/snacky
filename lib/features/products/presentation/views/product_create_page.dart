@@ -13,6 +13,7 @@ import 'package:snacky/features/products/domain/entities/product_entity.dart';
 
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
 import 'package:snacky/features/products/presentation/widgets/succes_dialog_product.dart';
+import 'package:snacky/main.dart'; // 👈 Importez main.dart pour accéder à la variable demo
 
 class ProductCreatePage extends ConsumerStatefulWidget {
   const ProductCreatePage({super.key});
@@ -86,6 +87,68 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
   }
 
   void _submit() {
+    // 🎯 Vérifier si on est en mode démo
+    if (demo) {
+      _showDemoDialog();
+      return;
+    }
+
+    // Sinon, procéder à la création du produit normalement
+    _createProduct();
+  }
+
+  /// Affiche une popup indiquant que l'on est en mode démo
+  void _showDemoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.info, color: Colors.blue.shade700, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Mode Démo",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text(
+            "Cette fonctionnalité n'est pas disponible en mode démo. "
+            "Veuillez désactiver le mode démo pour créer un produit.",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Fermer",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Crée le produit (fonction originale de _submit)
+  void _createProduct() {
     if (!_formKey.currentState!.validate()) return;
 
     print("🔍 _submit called:");
@@ -498,7 +561,9 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
                       SizedBox(
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: createState.isLoading ? null : _submit,
+                          onPressed: createState.isLoading
+                              ? null
+                              : _submit, // ✅ Utilise _submit au lieu de _createProduct
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
                             foregroundColor: Colors.white,
