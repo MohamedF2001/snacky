@@ -233,9 +233,193 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
   }
 
   @override
+  // Widget build(BuildContext context) {
+  //   final produitsState = ref.watch(productListNotifier);
+  //   final createState = ref.watch(createOrderProvider);
+  //
+  //   return Scaffold(
+  //     backgroundColor: Colors.grey.shade50,
+  //     appBar: AppBar(
+  //       backgroundColor: Colors.white,
+  //       elevation: 0,
+  //       leading: IconButton(
+  //         icon: const Icon(Icons.arrow_back, color: Colors.black),
+  //         onPressed: () => context.pop(),
+  //       ),
+  //       title: const Text(
+  //         "Nouvelle Commande",
+  //         style: TextStyle(
+  //           fontSize: 20,
+  //           fontWeight: FontWeight.w600,
+  //           color: Colors.black,
+  //         ),
+  //       ),
+  //       actions: [
+  //         Padding(
+  //           padding: const EdgeInsets.only(right: 20),
+  //           child: ElevatedButton.icon(
+  //             onPressed: createState.isLoading
+  //                 ? null
+  //                 : _submit, // ✅ Utilise _submit au lieu de _createOrder
+  //             icon: const Icon(Icons.check_circle),
+  //             label: const Text("Créer la commande"),
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.orange,
+  //               foregroundColor: Colors.white,
+  //               padding: const EdgeInsets.symmetric(
+  //                 horizontal: 24,
+  //                 vertical: 12,
+  //               ),
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //     body:
+  //
+  //     /*createState.isLoading
+  //         ? const Center(
+  //       child: SingleChildScrollView(
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             CircularProgressIndicator(color: Colors.orange),
+  //             SizedBox(height: 16),
+  //             Text("Création de la commande..."),
+  //           ],
+  //         ),
+  //       ),
+  //     )
+  //         : LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         final isMobile = constraints.maxWidth < 900;
+  //
+  //         return Padding(
+  //           padding: const EdgeInsets.all(24),
+  //           child: Form(
+  //             key: _formKey,
+  //             child: isMobile
+  //                 ? SingleChildScrollView(
+  //               child: Column(
+  //                 children: [
+  //                   // Colonne produits
+  //                   _buildProduitsCard(produitsState),
+  //                   const SizedBox(height: 16),
+  //
+  //                   // Total
+  //                   _buildCoutTotalCard(),
+  //                   const SizedBox(height: 24),
+  //
+  //                   // Infos client
+  //                   _buildClientCard(),
+  //                   const SizedBox(height: 16),
+  //
+  //                   // Type commande
+  //                   _buildTypeCommandeCard(),
+  //                 ],
+  //               ),
+  //             )
+  //                 : Row(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 // Colonne de gauche
+  //                 Expanded(
+  //                   flex: 2,
+  //                   child: SingleChildScrollView(
+  //                     child: Column(
+  //                       children: [
+  //                         _buildProduitsCard(produitsState),
+  //                         const SizedBox(height: 16),
+  //                         _buildCoutTotalCard(),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //
+  //                 const SizedBox(width: 24),
+  //
+  //                 // Colonne de droite
+  //                 Expanded(
+  //                   flex: 1,
+  //                   child: SingleChildScrollView(
+  //                     child: Column(
+  //                       children: [
+  //                         _buildClientCard(),
+  //                         const SizedBox(height: 16),
+  //                         _buildTypeCommandeCard(),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),*/
+  //
+  //
+  //     createState.isLoading
+  //         ? const Center(
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 CircularProgressIndicator(color: Colors.orange),
+  //                 SizedBox(height: 16),
+  //                 Text("Création de la commande..."),
+  //               ],
+  //             ),
+  //           )
+  //         : Padding(
+  //             padding: const EdgeInsets.all(24),
+  //             child: Form(
+  //               key: _formKey,
+  //               child: Row(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   // Colonne de gauche : Produits et total
+  //                   Expanded(
+  //                     flex: 2,
+  //                     child: SingleChildScrollView(
+  //                       child: Column(
+  //                         children: [
+  //                           _buildProduitsCard(produitsState),
+  //                           const SizedBox(height: 16),
+  //                           _buildCoutTotalCard(),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   const SizedBox(width: 24),
+  //                   // Colonne de droite : Informations client et type
+  //                   Expanded(
+  //                     flex: 1,
+  //                     child: SingleChildScrollView(
+  //                       child: Column(
+  //                         children: [
+  //                           _buildClientCard(),
+  //                           const SizedBox(height: 16),
+  //                           _buildTypeCommandeCard(),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //   );
+  // }
+
+  @override
   Widget build(BuildContext context) {
     final produitsState = ref.watch(productListNotifier);
     final createState = ref.watch(createOrderProvider);
+
+    final isMobile = MediaQuery.of(context).size.width < 850;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -246,21 +430,19 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
+        title: isMobile ? SizedBox.shrink() : Text(
           "Nouvelle Commande",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
-        ),
+        ) ,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: ElevatedButton.icon(
-              onPressed: createState.isLoading
-                  ? null
-                  : _submit, // ✅ Utilise _submit au lieu de _createOrder
+              onPressed: createState.isLoading ? null : _submit,
               icon: const Icon(Icons.check_circle),
               label: const Text("Créer la commande"),
               style: ElevatedButton.styleFrom(
@@ -278,57 +460,85 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
           ),
         ],
       ),
+
       body: createState.isLoading
           ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(color: Colors.orange),
-                  SizedBox(height: 16),
-                  Text("Création de la commande..."),
-                ],
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Colonne de gauche : Produits et total
-                    Expanded(
-                      flex: 2,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            _buildProduitsCard(produitsState),
-                            const SizedBox(height: 16),
-                            _buildCoutTotalCard(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    // Colonne de droite : Informations client et type
-                    Expanded(
-                      flex: 1,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            _buildClientCard(),
-                            const SizedBox(height: 16),
-                            _buildTypeCommandeCard(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: Colors.orange),
+            SizedBox(height: 16),
+            Text("Création de la commande..."),
+          ],
+        ),
+      )
+          : LayoutBuilder(
+        builder: (context, constraints) {
+          return Padding(
+            padding: EdgeInsets.all(isMobile ? 16 : 24),
+            child: Form(
+              key: _formKey,
+              child: isMobile
+                  ? _buildMobileLayout(produitsState)
+                  : _buildDesktopLayout(produitsState),
             ),
+          );
+        },
+      ),
     );
   }
+
+  /// 🌍 LAYOUT MOBILE (colonne)
+  Widget _buildMobileLayout(produitsState) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildProduitsCard(produitsState),
+          const SizedBox(height: 16),
+          _buildCoutTotalCard(),
+          const SizedBox(height: 16),
+          _buildClientCard(),
+          const SizedBox(height: 16),
+          _buildTypeCommandeCard(),
+        ],
+      ),
+    );
+  }
+
+  /// 🖥️ LAYOUT DESKTOP (2 colonnes)
+  Widget _buildDesktopLayout(produitsState) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildProduitsCard(produitsState),
+                const SizedBox(height: 16),
+                _buildCoutTotalCard(),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 24),
+        Expanded(
+          flex: 1,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildClientCard(),
+                const SizedBox(height: 16),
+                _buildTypeCommandeCard(),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
 
   Widget _buildClientCard() {
     return Container(

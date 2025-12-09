@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -606,3 +607,390 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
     );
   }
 }
+*/
+
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:snacky/const/app_colors.dart';
+import 'package:snacky/const/app_style.dart';
+import 'package:snacky/features/products/presentation/providers/product_provider.dart';
+import 'package:snacky/main.dart';
+
+class DetailsProductPage extends ConsumerStatefulWidget {
+  final String produitId;
+  final String productNom;
+
+  const DetailsProductPage({
+    super.key,
+    required this.produitId,
+    required this.productNom,
+  });
+
+  @override
+  ConsumerState<DetailsProductPage> createState() => _DetailsProductPageState();
+}
+
+class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(detailProductNotifier(widget.produitId).notifier)
+          .getProductById(widget.produitId);
+    });
+  }
+
+  Future<void> _showDeleteConfirmation() async {
+    if (demo) {
+      _showDemoDialog();
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: const [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange),
+            SizedBox(width: 8),
+            Text('Confirmer la suppression'),
+          ],
+        ),
+        content: Text(
+          'Voulez-vous supprimer "${widget.productNom}" ?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Supprimer'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      await ref
+          .read(deleteProductProvider.notifier)
+          .deleteProduct(widget.produitId);
+
+      final deleteState = ref.read(deleteProductProvider);
+
+      if (mounted) {
+        if (deleteState.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Produit supprimé avec succès'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          ref.read(productListNotifier.notifier).getProduits();
+          context.go('/products');
+        } else if (deleteState.error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erreur: ${deleteState.error}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  void _showDemoDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.info, color: Colors.blue.shade700, size: 24),
+              const SizedBox(width: 12),
+              const Text(
+                "Mode Démo",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text(
+            "Cette fonctionnalité n'est pas disponible en mode démo.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Fermer"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final productState = ref.watch(detailProductNotifier(widget.produitId));
+    final deleteState = ref.watch(deleteProductProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Détails"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit, color: AppColors.darkBlue),
+            onPressed: demo
+                ? _showDemoDialog
+                : () => context.push('/products/edit/${widget.produitId}'),
+          ),
+          IconButton(
+            icon: deleteState.isLoading
+                ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                color: Colors.orange,
+                strokeWidth: 2,
+              ),
+            )
+                : const Icon(Icons.delete, color: Colors.red),
+            onPressed:
+            deleteState.isLoading ? null : _showDeleteConfirmation,
+          ),
+        ],
+      ),
+
+      body: deleteState.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : productState.isLoading
+          ? const Center(
+        child: SpinKitThreeBounce(
+          color: AppColors.accentOrange,
+          size: 30.0,
+        ),
+      )
+          : productState.error != null
+          ? Center(child: Text("Erreur : ${productState.error}"))
+          : _buildMobileLayout(productState),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // ------------------------- MOBILE VERSION UNIQUEMENT ------------------------
+  // ---------------------------------------------------------------------------
+
+  Widget _buildMobileLayout(productState) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildProductImageMobile(productState),
+          const SizedBox(height: 16),
+          _buildProductInfoMobile(productState),
+          const SizedBox(height: 24),
+          _buildMobileButtons(),
+        ],
+      ),
+    );
+  }
+
+  // ----------------------------- IMAGE MOBILE --------------------------------
+
+  Widget _buildProductImageMobile(productState) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: productState.product?.imageUrl != null
+          ? Image.network(
+        productState.product!.imageUrl!,
+        height: 250,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              height: 250,
+              width: double.infinity,
+              color: Colors.white,
+            ),
+          );
+        },
+        errorBuilder: (_, __, ___) => _fallbackImage(),
+      )
+          : _fallbackImage(),
+    );
+  }
+
+  Widget _fallbackImage() {
+    return Container(
+      height: 250,
+      width: double.infinity,
+      color: Colors.grey[300],
+      child: const Center(
+        child: Icon(Icons.fastfood, size: 60, color: Colors.grey),
+      ),
+    );
+  }
+
+  // -------------------------- INFOS MOBILE -----------------------------------
+
+  Widget _buildProductInfoMobile(productState) {
+    final product = productState.product;
+
+    return Card(
+      elevation: 0.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              product.nom,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Description
+            _buildInfoTile(
+              icon: Icons.description,
+              title: "Description",
+              content: product.description,
+            ),
+            const SizedBox(height: 14),
+
+            // Prix
+            _buildPriceMobile(product.prix),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoTile({
+    required IconData icon,
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.grey.shade100,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: Colors.blue),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style:
+                const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            content,
+            style: const TextStyle(fontSize: 13, height: 1.4),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPriceMobile(double prix) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.attach_money, size: 24, color: Colors.green),
+          const SizedBox(width: 12),
+          Text(
+            "${prix.toStringAsFixed(2)} F CFA",
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ------------------------ ACTION BUTTONS MOBILE ----------------------------
+
+  Widget _buildMobileButtons() {
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            label: const Text("Retour", style: TextStyle(color: Colors.black)),
+            onPressed: () => context.go('/products'),
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            icon: const Icon(Icons.edit),
+            label: const Text("Modifier"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.accentOrange,
+              foregroundColor: Colors.black,
+            ),
+            onPressed: demo
+                ? _showDemoDialog
+                : () => context.push('/products/edit/${widget.produitId}'),
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            label: const Text(
+              "Supprimer",
+              style: TextStyle(color: Colors.red),
+            ),
+            onPressed: _showDeleteConfirmation,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
