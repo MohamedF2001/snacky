@@ -19,11 +19,11 @@ class ApiClient {
     // Ajouter des headers pour CORS
     _dio.options.headers['Content-Type'] = 'application/json';
     _dio.options.headers['Accept'] = 'application/json';
-    _dio.options.headers['Access-Control-Allow-Origin'] = '*';
-    _dio.options.headers['Access-Control-Allow-Methods'] =
-        'GET, POST, PUT, DELETE, OPTIONS';
-    _dio.options.headers['Access-Control-Allow-Headers'] =
-        'Origin, Content-Type, Accept, Authorization, X-Requested-With';
+    // _dio.options.headers['Access-Control-Allow-Origin'] = '*';
+    // _dio.options.headers['Access-Control-Allow-Methods'] =
+    //     'GET, POST, PUT, DELETE, OPTIONS';
+    // _dio.options.headers['Access-Control-Allow-Headers'] =
+    //     'Origin, Content-Type, Accept, Authorization, X-Requested-With';
 
     _dio.interceptors.add(
       InterceptorsWrapper(

@@ -15,10 +15,10 @@ class AuthRemoteDataSource {
     String password,
   ) async {
     try {
-      print('🔐 Attempting login to: ${AppConfig.baseUrl}/auth/login');
+      print('🔐 Attempting login to: ${AppConfig.baseUrl}/auth/admin/login');
 
       final response = await apiClient.dio.post(
-        '/auth/login',
+        '/auth/admin/login',
         data: {'email': email, 'motDePasse': password},
       );
 
