@@ -29,20 +29,6 @@ class OrderProductModel extends OrderProductEntity {
     produit: produit,
     quantite: quantite,
   );
-
-  /*static dynamic _produitFromJson(dynamic json) {
-    if (json == null) return null;
-    if (json is String) return json;
-    if (json is Map<String, dynamic>) {
-      try {
-        return ProductModel.fromJson(json);
-      } catch (e) {
-        print("❌ Error parsing product in _produitFromJson: $e");
-        return null;
-      }
-    }
-    return null;
-  }*/
   static dynamic _produitFromJson(dynamic json) {
     if (json == null) return null;
 
@@ -163,7 +149,7 @@ class OrderModel extends OrderEntity {
     updatedAt: updatedAt,
   );
 
-  static dynamic _clientFromJson(dynamic json) {
+  /*static dynamic _clientFromJson(dynamic json) {
     if (json == null) return null;
     if (json is String) return json;
     if (json is Map<String, dynamic>) {
@@ -182,73 +168,45 @@ class OrderModel extends OrderEntity {
     if (client is String) return client;
     if (client is UserModel) return client.toJson();
     return null;
+  }*/
+
+  // Dans order_model.dart
+  static dynamic _clientFromJson(dynamic json) {
+    if (json == null) {
+      print("⚠️ Client est null dans la réponse");
+      return null;
+    }
+
+    if (json is String) {
+      print("✅ Client est un ID: $json");
+      return json;
+    }
+
+    if (json is Map<String, dynamic>) {
+      try {
+        print("✅ Client est un objet complet: ${json['nom']}");
+        return UserModel.fromJson(json);
+      } catch (e) {
+        print("❌ Erreur parsing client objet: $e");
+        // Fallback: retourner l'ID du client
+        return json['_id'] as String?;
+      }
+    }
+
+    print("⚠️ Type de client inattendu: ${json.runtimeType}");
+    return null;
+  }
+
+  static dynamic _clientToJson(dynamic client) {
+    // ✅ Quand on envoie, on envoie toujours null ou un String ID
+    if (client == null) return null;
+    if (client is String) return client;
+    if (client is UserModel) return client.id; // ✅ Envoyer seulement l'ID, pas l'objet complet
+    return null;
   }
 
   // Factory method personnalisée pour gérer les nulls correctement
   /*factory OrderModel.fromJson(Map<String, dynamic> json) {
-    try {
-      // Gestion robuste de numeroTable
-      int? parseNumeroTable(dynamic value) {
-        if (value == null) return null;
-        if (value is int) return value;
-        if (value is String) return int.tryParse(value);
-        if (value is num) return value.toInt();
-        return null;
-      }
-
-      // Gestion robuste des dates
-      DateTime? parseDateTime(dynamic value) {
-        if (value == null) return null;
-        if (value is DateTime) return value;
-        if (value is String) return DateTime.tryParse(value);
-        return null;
-      }
-
-      // Gestion robuste des produits
-      List<OrderProductModel> parseProduits(dynamic value) {
-        if (value is List) {
-          return value
-              .map((item) {
-            try {
-              if (item is Map<String, dynamic>) {
-                return OrderProductModel.fromJson(item);
-              }
-              return null;
-            } catch (e) {
-              print("❌ Error parsing product item: $e");
-              return null;
-            }
-          })
-              .whereType<OrderProductModel>()
-              .toList();
-        }
-        return [];
-      }
-
-      return OrderModel(
-        id: json['_id'] as String?,
-        client: _clientFromJson(json['client']),
-        nomClient: (json['nomClient'] as String?) ?? '',
-        telephone: (json['telephone'] as String?) ?? '',
-        produits: parseProduits(json['produits']),
-        coutTotal: (json['coutTotal'] as num?)?.toDouble() ?? 0.0,
-        statut: (json['statut'] as String?) ?? 'en cours',
-        numeroTable: parseNumeroTable(json['numeroTable']), // Gère explicitement le null
-        surPlace: (json['surPlace'] as bool?) ?? false,
-        livraison: (json['livraison'] as bool?) ?? false,
-        createdAt: parseDateTime(json['createdAt']),
-        updatedAt: parseDateTime(json['updatedAt']),
-        v: (json['__v'] as num?)?.toInt(),
-      );
-    } catch (e, stackTrace) {
-      print("❌ Critical error in OrderModel.fromJson: $e");
-      print("❌ Stack trace: $stackTrace");
-      print("❌ Problematic JSON keys: ${json.keys}");
-      print("❌ numeroTable value: ${json['numeroTable']} (type: ${json['numeroTable']?.runtimeType})");
-      rethrow;
-    }
-  }*/
-  factory OrderModel.fromJson(Map<String, dynamic> json) {
     try {
       // Gestion robuste de numeroTable
       int? parseNumeroTable(dynamic value) {
@@ -320,6 +278,104 @@ class OrderModel extends OrderEntity {
       print("❌ Problematic JSON keys: ${json.keys}");
       print("❌ numeroTable value: ${json['numeroTable']} (type: ${json['numeroTable']?.runtimeType})");
       print("❌ telephone value: ${json['telephone']} (type: ${json['telephone']?.runtimeType})");
+      rethrow;
+    }
+  }*/
+
+  factory OrderModel.fromJson(Map<String, dynamic> json) {
+    try {
+      // Gestion robuste du client
+      dynamic parseClient(dynamic value) {
+        if (value == null) {
+          print("ℹ️ Client null dans la réponse");
+          return null;
+        }
+
+        if (value is String) {
+          print("ℹ️ Client est un ID: $value");
+          return value;
+        }
+
+        if (value is Map<String, dynamic>) {
+          try {
+            print("ℹ️ Parsing client objet: ${value['nom']}");
+            return UserModel.fromJson(value);
+          } catch (e) {
+            print("⚠️ Erreur parsing client objet, utilisation de l'ID: $e");
+            // Fallback: utiliser l'ID
+            return value['_id'] as String?;
+          }
+        }
+
+        print("⚠️ Type de client inattendu: ${value.runtimeType}");
+        return null;
+      }
+
+      // Gestion robuste de numeroTable
+      int? parseNumeroTable(dynamic value) {
+        if (value == null) return null;
+        if (value is int) return value;
+        if (value is String) return int.tryParse(value);
+        if (value is num) return value.toInt();
+        return null;
+      }
+
+      // Gestion robuste des dates
+      DateTime? parseDateTime(dynamic value) {
+        if (value == null) return null;
+        if (value is DateTime) return value;
+        if (value is String) return DateTime.tryParse(value);
+        return null;
+      }
+
+      // Gestion robuste des produits
+      List<OrderProductModel> parseProduits(dynamic value) {
+        if (value is List) {
+          return value
+              .map((item) {
+            try {
+              if (item is Map<String, dynamic>) {
+                return OrderProductModel.fromJson(item);
+              }
+              return null;
+            } catch (e) {
+              print("❌ Error parsing product item: $e");
+              return null;
+            }
+          })
+              .whereType<OrderProductModel>()
+              .toList();
+        }
+        return [];
+      }
+
+      // Gestion robuste du téléphone
+      String parsePhone(dynamic value) {
+        if (value == null) return '';
+        if (value is String) return value;
+        if (value is num) return value.toString();
+        return value.toString();
+      }
+
+      return OrderModel(
+        id: json['_id'] as String?,
+        client: parseClient(json['client']), // ✅ Gestion robuste
+        nomClient: (json['nomClient'] as String?) ?? '',
+        telephone: parsePhone(json['telephone']),
+        produits: parseProduits(json['produits']),
+        coutTotal: (json['coutTotal'] as num?)?.toDouble() ?? 0.0,
+        statut: (json['statut'] as String?) ?? 'en cours',
+        numeroTable: parseNumeroTable(json['numeroTable']),
+        surPlace: (json['surPlace'] as bool?) ?? false,
+        livraison: (json['livraison'] as bool?) ?? false,
+        createdAt: parseDateTime(json['createdAt']),
+        updatedAt: parseDateTime(json['updatedAt']),
+        v: (json['__v'] as num?)?.toInt(),
+      );
+    } catch (e, stackTrace) {
+      print("❌ Critical error in OrderModel.fromJson: $e");
+      print("❌ Stack trace: $stackTrace");
+      print("❌ JSON: $json");
       rethrow;
     }
   }

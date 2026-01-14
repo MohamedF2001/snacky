@@ -10,6 +10,8 @@ import 'package:snacky/features/products/data/models/product_model.dart';
 import 'package:snacky/features/products/domain/entities/product_entity.dart';
 import 'package:snacky/features/products/domain/repositories/product_repository.dart';
 
+import '../../../../core/utils/app_logger.dart';
+
 class ProductRepositoryImpl implements ProductRepository {
   final ProductRemoteDataSource remoteDataSource;
 
@@ -46,7 +48,7 @@ class ProductRepositoryImpl implements ProductRepository {
         try {
           categorieValue = product.categorie.id;
         } catch (e) {
-          print("⚠️ Erreur lors de l'accès à categorie.id: $e");
+          logger.w("⚠️ Erreur lors de l'accès à categorie.id: $e");
           categorieValue = product.categorie.toString();
         }
       }
@@ -61,9 +63,7 @@ class ProductRepositoryImpl implements ProductRepository {
       categorie: categorieValue, // ✅ Utiliser la valeur convertie
     );
 
-    print(
-      "🔍 ProductModel categorie: ${productModel.categorie} (${productModel.categorie.runtimeType})",
-    );
+    logger.d("🔍 ProductModel categorie: ${productModel.categorie} (${productModel.categorie.runtimeType})");
 
     final result = await remoteDataSource.createProduct(
       productModel,
@@ -117,7 +117,7 @@ class ProductRepositoryImpl implements ProductRepository {
         try {
           categorieValue = product.categorie.id;
         } catch (e) {
-          print("⚠️ Erreur lors de l'accès à categorie.id: $e");
+          logger.w("⚠️ Erreur lors de l'accès à categorie.id: $e");
           categorieValue = product.categorie.toString();
         }
       }
@@ -132,7 +132,7 @@ class ProductRepositoryImpl implements ProductRepository {
       categorie: categorieValue,
     );
 
-    print("📤 ProductModel à mettre à jour: ${productModel.id}");
+    logger.d("📤 ProductModel à mettre à jour: ${productModel.id}");
 
     final result = await remoteDataSource.updateProduct(
       productModel,

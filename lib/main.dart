@@ -6,7 +6,7 @@ import 'package:snacky/virtual.dart';
 import 'const/app_theme.dart';
 
 // 🎯 Variable de démonstration
-const bool demo = true; // Mettez à false pour désactiver le mode démo
+const bool demo = false; // Mettez à false pour désactiver le mode démo
 
 void main() {
   runApp(const ProviderScope(child: FastFoodApp()));

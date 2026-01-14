@@ -7,6 +7,8 @@ import 'package:snacky/features/orders/data/models/order_model.dart';
 import 'package:snacky/features/orders/domain/entities/order_entity.dart';
 import 'package:snacky/features/orders/domain/repositories/order_repository.dart';
 
+import '../../../../core/utils/app_logger.dart';
+
 class OrderRepositoryImpl implements OrderRepository {
   final OrderRemoteDataSource remoteDataSource;
 
@@ -56,7 +58,7 @@ class OrderRepositoryImpl implements OrderRepository {
       updatedAt: order.updatedAt,
     );
 
-    print("📤 OrderModel à envoyer: client=${orderModel.client}");
+    logger.d("📤 OrderModel à envoyer: client = ${orderModel.client}");
 
     final result = await remoteDataSource.createOrder(orderModel);
 
@@ -115,7 +117,7 @@ class OrderRepositoryImpl implements OrderRepository {
       updatedAt: order.updatedAt,
     );
 
-    print("📤 OrderModel à mettre à jour: ${orderModel.id}");
+    logger.d('📤 OrderModel à mettre à jour: ${orderModel.id}');
 
     final result = await remoteDataSource.updateOrder(orderModel);
 

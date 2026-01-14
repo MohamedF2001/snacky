@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:snacky/core/config/app_config.dart';
+import 'package:snacky/core/utils/app_logger.dart';
 
 // core/network/api_client.dart
 
@@ -28,36 +29,41 @@ class ApiClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          print('🌐 Making request to: ${options.uri}');
-          print('📝 Headers: ${options.headers}');
-          print('📦 Data: ${options.data}');
+          logger.i('🌐 Making request to: ${options.uri}');
+          logger.i('📝 Headers: ${options.headers}');
+          logger.i('📦 Data: ${options.data}');
 
           final prefs = await SharedPreferences.getInstance();
           final token = prefs.getString('token');
 
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
-            print('🔑 Adding auth token: $token');
+            logger.d('🔑 Adding auth token: $token');
           }
 
           return handler.next(options);
         },
         onError: (error, handler) async {
-          print('❌ Dio Error: ${error.type}');
-          print('❌ Dio Error Message: ${error.message}');
-          print('❌ Dio Error Response: ${error.response?.data}');
-          print('❌ Dio Error Status: ${error.response?.statusCode}');
+          logger.e(
+            "❌ Dio error",
+            error: {
+              "message": error.message.toString(),
+              "type": error.type.toString(),
+              "statusCode": error.response?.statusCode,
+              "data": error.response?.data,
+            },
+          );
 
           if (error.response?.statusCode == 401) {
             final prefs = await SharedPreferences.getInstance();
             await prefs.remove('token');
-            print('🔒 Token removed due to 401 error');
+            logger.d('🔒 Token removed due to 401 error');
           }
           return handler.next(error);
         },
         onResponse: (response, handler) {
-          print('✅ Response received: ${response.statusCode}');
-          print('✅ Response data: ${response.data}');
+          logger.d('✅ Response received: ${response.statusCode}');
+          logger.d('✅ Response data: ${response.data}');
           return handler.next(response);
         },
       ),

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:snacky/core/error/failures.dart';
 import 'package:snacky/core/network/api_client.dart';
+import 'package:snacky/core/utils/app_logger.dart';
 import 'package:snacky/features/categories/data/models/categorie_model.dart';
 
 class CategorieRemoteDataSource {
@@ -21,9 +22,7 @@ class CategorieRemoteDataSource {
           .toList();
 
       for (var c in categories) {
-        print(
-          "Catégorie => id: ${c.id}, nom: ${c.nom}, desc: ${c.description}, date: ${c.date}, v: ${c.v}",
-        );
+        logger.d("Catégorie => id: ${c.id}, nom: ${c.nom}, desc: ${c.description}, date: ${c.date}, v: ${c.v}");
       }
 
       return Right(categories);

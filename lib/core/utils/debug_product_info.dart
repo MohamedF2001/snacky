@@ -1,6 +1,8 @@
 // core/utils/debug_product_info.dart
 // Helper pour extraire les infos d'un produit peu importe son format
 
+import 'package:snacky/core/utils/app_logger.dart';
+
 class ProductInfo {
   final String name;
   final double price;
@@ -40,7 +42,7 @@ class ProductInfo {
           id: (product as dynamic).id,
         );
       } catch (e) {
-        print("❌ Erreur extraction ProductEntity: $e");
+        logger.e("❌ Erreur extraction ProductEntity: $e");
       }
     }
 
@@ -55,8 +57,8 @@ class ProductInfo {
     }
 
     // Cas par défaut
-    print("⚠️ Type de produit non géré: ${product.runtimeType}");
-    print("⚠️ Contenu: $product");
+    logger.d("⚠️ Type de produit non géré: ${product.runtimeType}");
+    logger.d("⚠️ Contenu: $product");
     return ProductInfo(name: 'Produit inconnu', price: 0.0);
   }
 }
@@ -73,7 +75,7 @@ extension OrderProductEntityExtension on dynamic {
       final produit = (this as dynamic).produit;
       return ProductInfo.extractFromDynamic(produit);
     } catch (e) {
-      print("❌ Erreur extraction produit: $e");
+      logger.e("❌ Erreur extraction produit: $e");
       return ProductInfo(name: 'Produit inconnu', price: 0.0);
     }
   }

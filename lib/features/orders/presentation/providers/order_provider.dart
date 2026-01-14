@@ -80,6 +80,18 @@ class OrderListNotifier extends StateNotifier<OrderListState> {
     );
   }
 
+  // ✅ Nouvelle méthode pour mettre à jour une commande dans la liste
+  void updateOrderInList(OrderEntity updatedOrder) {
+    final updatedOrders = state.orders.map((order) {
+      if (order.id == updatedOrder.id) {
+        return updatedOrder;
+      }
+      return order;
+    }).toList();
+
+    state = state.copyWith(orders: updatedOrders);
+  }
+
   void clearError() {
     state = state.copyWith(error: null);
   }
@@ -236,7 +248,7 @@ class UpdateOrderStatusState {
 }
 
 // ============ UPDATE ORDER STATUS NOTIFIER ============
-class UpdateOrderStatusNotifier extends StateNotifier<UpdateOrderStatusState> {
+/*class UpdateOrderStatusNotifier extends StateNotifier<UpdateOrderStatusState> {
   final UpdateOrderStatusUseCase updateOrderStatusUseCase;
 
   UpdateOrderStatusNotifier({required this.updateOrderStatusUseCase})
@@ -257,6 +269,46 @@ class UpdateOrderStatusNotifier extends StateNotifier<UpdateOrderStatusState> {
           order: updatedOrder,
           error: null,
         );
+      },
+    );
+  }
+
+  void reset() {
+    state = UpdateOrderStatusState();
+  }
+
+  void clearError() {
+    state = state.copyWith(error: null);
+  }
+}*/
+
+class UpdateOrderStatusNotifier extends StateNotifier<UpdateOrderStatusState> {
+  final UpdateOrderStatusUseCase updateOrderStatusUseCase;
+  final Ref ref;
+
+  UpdateOrderStatusNotifier({
+    required this.updateOrderStatusUseCase,
+    required this.ref,
+  }) : super(UpdateOrderStatusState());
+
+  Future<void> updateOrderStatus(String id, String statut) async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    final result = await updateOrderStatusUseCase.execute(id, statut);
+
+    result.fold(
+          (failure) {
+        state = state.copyWith(isLoading: false, error: failure);
+      },
+          (updatedOrder) {
+        state = state.copyWith(
+          isLoading: false,
+          order: updatedOrder,
+          error: null,
+        );
+
+        // ✅ Mettre à jour seulement l'élément modifié dans la liste
+        ref.read(orderListNotifier.notifier).updateOrderInList(updatedOrder);
       },
     );
   }
@@ -334,6 +386,7 @@ final updateOrderStatusProvider = StateNotifierProvider<
         remoteDataSource: OrderRemoteDataSource(apiClient: ApiClient()),
       ),
     ),
+    ref: ref
   );
 });
 

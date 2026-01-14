@@ -3,6 +3,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:snacky/core/error/failures.dart';
 import 'package:snacky/core/network/api_client.dart';
+import 'package:snacky/core/utils/app_logger.dart';
 import 'package:snacky/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:snacky/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:snacky/features/auth/domain/entities/user_entity.dart';
@@ -53,12 +54,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final user = await authRepository.getCurrentUser();
       if (user != null) {
         state = state.copyWith(user: user, isInitializing: false);
-        print('✅ User loaded from storage: ${user.email}');
+        logger.d('✅ User loaded from storage: ${user.email}');
       } else {
         state = state.copyWith(isInitializing: false);
       }
     } catch (e) {
-      print('❌ Error loading user: $e');
+      logger.e('❌ Error loading user: $e');
       state = state.copyWith(isInitializing: false);
     }
   }
@@ -66,17 +67,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> login(String email, String password) async {
     state = state.copyWith(isLoading: true, error: null);
 
-    print('Attempting login with: $email');
+    logger.d('Attempting login with: $email');
 
     final result = await loginUseCase.execute(email, password);
 
     result.fold(
       (failure) {
-        print('Login failed: $failure');
+        logger.e('❌ Login failed: $failure');
         state = state.copyWith(isLoading: false, error: failure);
       },
       (user) {
-        print('Login successful: ${user.email}');
+        logger.d('✅ Login successful: ${user.email}');
         state = state.copyWith(isLoading: false, user: user, error: null);
       },
     );
@@ -84,16 +85,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     try {
-      print('🔒 Starting logout process...');
+      logger.d('🔒 Starting logout process...');
+
       await authRepository.logout();
 
       // Réinitialiser complètement l'état
       state = AuthState(isInitializing: false);
 
-      print('✅ Logout completed. isAuthenticated: ${state.isAuthenticated}');
-      print('✅ isInitializing: ${state.isInitializing}');
+      logger.d('🔒 Logout completed ${state.isAuthenticated}');
+      logger.d('🔒 isInitializing: ${state.isInitializing}');
     } catch (e) {
-      print('❌ Error during logout: $e');
+      logger.e('❌ Error during logout: $e');
+      if (state.isAuthenticated)
       state = AuthState(isInitializing: false);
     }
   }
