@@ -49,11 +49,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Connexion')),
+      appBar: AppBar(
+        centerTitle: true,
+          title: const Text('Connexion')),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.orange.shade400, Colors.orange.shade600],
+            colors: [Colors.orange.shade400, Colors.orangeAccent, Colors.orange.shade600],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -100,16 +102,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         TextFormField(
                           controller: _emailController,
                           decoration: AppInputStyles.textFieldDecoration(
-                            label: "Mot de passe",
+                            label: "Adresse mail",
                             icon: Icons.email_outlined,
                           ),
-                          /*InputDecoration(
-                            prefixIcon: const Icon(Icons.email_outlined),
-                            labelText: "Email",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),*/
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Veuillez entrer votre email';
@@ -140,25 +135,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               },
                             ),
                           ) ,
-                          /*InputDecoration(
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            labelText: "Mot de passe",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                          ),*/
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Veuillez entrer votre mot de passe';

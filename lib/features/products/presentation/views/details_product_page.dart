@@ -682,31 +682,52 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
     );
 
     if (confirmed == true && mounted) {
-      await ref
-          .read(deleteProductProvider.notifier)
-          .deleteProduct(widget.produitId);
-
-      final deleteState = ref.read(deleteProductProvider);
-
-      if (mounted) {
-        if (deleteState.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Produit supprimé avec succès'),
-              backgroundColor: Colors.green,
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
+              const SizedBox(width: 8),
+              const Text("Oup's"),
+            ],
+          ),
+          content: const Text(
+            "Vous ne pouvez pas effectuer cette action vu que vous n'etes pas propriétaire",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text("Fermer"),
             ),
-          );
-          ref.read(productListNotifier.notifier).getProduits();
-          context.go('/products');
-        } else if (deleteState.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Erreur: ${deleteState.error}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
+          ],
+        ),
+      );
+      //await ref
+      //    .read(deleteProductProvider.notifier)
+      //    .deleteProduct(widget.produitId);
+
+      //final deleteState = ref.read(deleteProductProvider);
+
+      // if (mounted) {
+      //   if (deleteState.success) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(
+      //         content: Text('Produit supprimé avec succès'),
+      //         backgroundColor: Colors.green,
+      //       ),
+      //     );
+      //     ref.read(productListNotifier.notifier).getProduits();
+      //     context.go('/products');
+      //   } else if (deleteState.error != null) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       SnackBar(
+      //         content: Text('Erreur: ${deleteState.error}'),
+      //         backgroundColor: Colors.red,
+      //       ),
+      //     );
+      //   }
+      // }
     }
   }
 

@@ -126,24 +126,45 @@ class _ProductEditPageState extends ConsumerState<ProductEditPage> {
     final updateState = ref.read(updateProductProvider);
 
     if (mounted) {
-      if (updateState.error == null && updateState.product != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Produit mis à jour avec succès'),
-            backgroundColor: Colors.green,
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
+              const SizedBox(width: 8),
+              const Text("Oup's"),
+            ],
           ),
-        );
-        // Rafraîchir la liste des produits
-        ref.read(productListNotifier.notifier).getProduits();
-        context.go('/products');
-      } else if (updateState.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur: ${updateState.error}'),
-            backgroundColor: Colors.red,
+          content: const Text(
+            "Vous ne pouvez pas effectuer cette action vu que vous n'etes pas propriétaire",
           ),
-        );
-      }
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text("Fermer"),
+            ),
+          ],
+        ),
+      );
+      // if (updateState.error == null && updateState.product != null) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text('Produit mis à jour avec succès'),
+      //       backgroundColor: Colors.green,
+      //     ),
+      //   );
+      //   // Rafraîchir la liste des produits
+      //   ref.read(productListNotifier.notifier).getProduits();
+      //   context.go('/products');
+      // } else if (updateState.error != null) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text('Erreur: ${updateState.error}'),
+      //       backgroundColor: Colors.red,
+      //     ),
+      //   );
+      // }
     }
   }
 
