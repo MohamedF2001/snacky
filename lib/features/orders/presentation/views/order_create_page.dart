@@ -8,6 +8,7 @@ import 'package:snacky/features/products/presentation/providers/product_provider
 import 'package:snacky/main.dart'; // 👈 Importez main.dart pour accéder à la variable demo
 
 import '../../../../const/app_input_style.dart';
+import '../../../../core/providers/demo_provider.dart';
 
 class OrderCreatePage extends ConsumerStatefulWidget {
   const OrderCreatePage({super.key});
@@ -92,10 +93,11 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
 
   Future<void> _submit() async {
     // 🎯 Vérifier si on est en mode démo
-    if (demo) {
+    /*if (demo) {
       _showDemoDialog();
       return;
-    }
+    }*/
+    if (ref.read(demoProvider)) { _showDemoDialog(); return; }
 
     // Sinon, procéder à la création de la commande normalement
     _createOrder();

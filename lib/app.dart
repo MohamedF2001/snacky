@@ -20,6 +20,7 @@ import 'features/orders/presentation/views/order_edit_page.dart';
 import 'features/orders/presentation/views/order_list_page_with_filters.dart';
 import 'features/promotions/presentation/views/create_promotion_page.dart';
 import 'features/promotions/presentation/views/promotion_detail_page.dart';
+import 'features/settings/presentation/views/settings_page.dart';
 import 'home.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -97,7 +98,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               return ProductEditPage(productId: productId);
             },
           ),
-          GoRoute(
+          /*GoRoute(
             path: '/settings',
             name: 'settings',
             builder: (context, state) => Center(
@@ -118,6 +119,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ],
               ),
             ),
+          ),*/
+          GoRoute(
+            path: '/settings',
+            name: 'settings',
+            builder: (context, state) => const SettingsPage(),
           ),
           GoRoute(
             path: '/categories/:id/products',

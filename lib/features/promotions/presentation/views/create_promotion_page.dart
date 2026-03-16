@@ -7,6 +7,7 @@ import 'package:snacky/features/promotions/presentation/providers/promotion_prov
 import 'package:snacky/features/products/domain/entities/product_entity.dart';
 
 import '../../../../const/app_input_style.dart';
+import '../../../../core/providers/demo_provider.dart';
 import '../../../products/presentation/providers/product_provider.dart';
 import 'package:snacky/main.dart'; // 👈 Import pour accéder à la variable demo
 
@@ -60,10 +61,11 @@ class _CreatePromotionPageState extends ConsumerState<CreatePromotionPage> {
 
   /// Méthode appelée par le bouton : respecte le mode demo
   Future<void> _submit() async {
-    if (demo) {
+    /*if (demo) {
       _showDemoDialog();
       return;
-    }
+    }*/
+    if (ref.read(demoProvider)) { _showDemoDialog(); return; }
     await _createPromotion();
   }
 

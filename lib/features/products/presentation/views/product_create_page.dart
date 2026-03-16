@@ -881,6 +881,8 @@ import 'package:snacky/features/products/presentation/providers/product_provider
 import 'package:snacky/features/products/presentation/widgets/succes_dialog_product.dart';
 import 'package:snacky/main.dart';
 
+import '../../../../core/providers/demo_provider.dart';
+
 class ProductCreatePage extends ConsumerStatefulWidget {
   const ProductCreatePage({super.key});
 
@@ -953,10 +955,11 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
   }
 
   void _submit() {
-    if (demo) {
+    /*if (demo) {
       _showDemoDialog();
       return;
-    }
+    }*/
+    if (ref.read(demoProvider)) { _showDemoDialog(); return; }
     _createProduct();
   }
 

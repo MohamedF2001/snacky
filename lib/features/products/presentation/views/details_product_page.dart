@@ -620,6 +620,8 @@ import 'package:snacky/const/app_style.dart';
 import 'package:snacky/features/products/presentation/providers/product_provider.dart';
 import 'package:snacky/main.dart';
 
+import '../../../../core/providers/demo_provider.dart';
+
 class DetailsProductPage extends ConsumerStatefulWidget {
   final String produitId;
   final String productNom;
@@ -646,10 +648,11 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
   }
 
   Future<void> _showDeleteConfirmation() async {
-    if (demo) {
+    /*if (demo) {
       _showDemoDialog();
       return;
-    }
+    }*/
+    if (ref.read(demoProvider)) { _showDemoDialog(); return; }
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -775,9 +778,11 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit, color: AppColors.darkBlue),
-            onPressed: demo
+            /*onPressed: demo
                 ? _showDemoDialog
-                : () => context.push('/products/edit/${widget.produitId}'),
+                : () => context.push('/products/edit/${widget.produitId}'),*/
+            onPressed: ref.watch(demoProvider) ?
+            _showDemoDialog : () => context.push('/products/edit/${widget.produitId}'),
           ),
           IconButton(
             icon: deleteState.isLoading
@@ -992,9 +997,11 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
               backgroundColor: AppColors.accentOrange,
               foregroundColor: Colors.black,
             ),
-            onPressed: demo
+            /*onPressed: demo
                 ? _showDemoDialog
-                : () => context.push('/products/edit/${widget.produitId}'),
+                : () => context.push('/products/edit/${widget.produitId}'),*/
+              onPressed: ref.watch(demoProvider) ?
+              _showDemoDialog : () => context.push('/products/edit/${widget.produitId}'),
           ),
         ),
         const SizedBox(height: 12),
