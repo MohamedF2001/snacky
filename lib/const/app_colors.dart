@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  // Dans app_colors.dart (suggestion)
+  static const primaryOrange = Color(0xFFFF6B35);  // Orange appétissant
+  static const secondaryRed = Color(0xFFE63946);   // Rouge dynamique
+  static const accentYellow = Color(0xFFFFD166);   // Jaune chaleureux
+  static const background = Color(0xFFF8F9FA);     // Fond neutre
   // ============ COULEURS PRINCIPALES ============
   static const Color primaryRed = Color(0xFFE63946);
   static const Color secondaryBlue = Color(0xFF457B9D);

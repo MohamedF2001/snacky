@@ -23,15 +23,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   final List<_SidebarItem> _items = const [
     _SidebarItem(icon: Icons.person_outline, label: 'Profil', group: 'Compte'),
-    _SidebarItem(icon: Icons.lock_outline, label: 'Sécurité', group: null),
+    //_SidebarItem(icon: Icons.lock_outline, label: 'Sécurité', group: null),
     _SidebarItem(
         icon: Icons.notifications_none,
         label: 'Notifications',
         group: 'Application'),
     _SidebarItem(icon: Icons.palette_outlined, label: 'Affichage', group: null),
-    _SidebarItem(
-        icon: Icons.visibility_outlined, label: 'Mode démo', group: null),
-    _SidebarItem(icon: Icons.link, label: 'API & connexion', group: 'Données'),
+    //_SidebarItem(icon: Icons.visibility_outlined, label: 'Mode démo', group: null),
+    //_SidebarItem(icon: Icons.link, label: 'API & connexion', group: 'Données'),
     _SidebarItem(icon: Icons.info_outline, label: 'À propos', group: null),
   ];
 
@@ -199,17 +198,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     switch (index) {
       case 0:
         return const ProfileSection();
+      //case 1:
+      //  return const SecuritySection();
       case 1:
-        return const SecuritySection();
-      case 2:
         return const NotificationsSection();
-      case 3:
+      case 2:
         return const DisplaySection();
-      case 4:
-        return const DemoModeSection();
-      case 5:
-        return const ApiSection();
-      case 6:
+      //case 3:
+      //  return const DemoModeSection();
+      //case 4:
+      //  return const ApiSection();
+      case 3:
         return const AboutSection();
       default:
         return const ProfileSection();

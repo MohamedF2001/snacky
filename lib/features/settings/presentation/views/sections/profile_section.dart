@@ -159,7 +159,7 @@ class _ProfileSectionState extends ConsumerState<ProfileSection> {
               SettingsRow(
                 label: 'Nom complet',
                 subtitle: profile?.nom ?? authState.user?.nom ?? '—',
-                trailing: TextButton(
+                /*trailing: TextButton(
                   onPressed: () {
                     _nomController.text = profile?.nom ?? authState.user?.nom ?? '';
                     _emailController.text = profile?.email ?? authState.user?.email ?? '';
@@ -169,7 +169,7 @@ class _ProfileSectionState extends ConsumerState<ProfileSection> {
                     'Modifier',
                     style: TextStyle(color: Colors.orange),
                   ),
-                ),
+                ),*/
               ),
               SettingsRow(
                 label: 'Adresse email',
