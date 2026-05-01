@@ -84,11 +84,13 @@ class _ThemeSelector extends StatelessWidget {
       {'key': 'dark', 'label': 'Sombre'},
       {'key': 'auto', 'label': 'Auto'},
     ];
+    final colorScheme = Theme.of(context).colorScheme;
     return DropdownButton<String>(
       value: current,
       underline: const SizedBox(),
       borderRadius: BorderRadius.circular(8),
-      style: const TextStyle(fontSize: 13, color: Colors.black87),
+      dropdownColor: colorScheme.surface,
+      style: TextStyle(fontSize: 13, color: colorScheme.onSurface),
       items: themes
           .map((t) => DropdownMenuItem<String>(
         value: t['key'],
@@ -109,11 +111,13 @@ class _CurrencySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const currencies = ['F CFA', 'EUR', 'USD', 'GBP'];
+    final colorScheme = Theme.of(context).colorScheme;
     return DropdownButton<String>(
       value: currencies.contains(current) ? current : 'F CFA',
       underline: const SizedBox(),
       borderRadius: BorderRadius.circular(8),
-      style: const TextStyle(fontSize: 13, color: Colors.black87),
+      dropdownColor: colorScheme.surface,
+      style: TextStyle(fontSize: 13, color: colorScheme.onSurface),
       items: currencies
           .map((c) => DropdownMenuItem<String>(value: c, child: Text(c)))
           .toList(),

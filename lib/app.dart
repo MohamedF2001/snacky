@@ -20,6 +20,8 @@ import 'features/orders/presentation/views/order_edit_page.dart';
 import 'features/orders/presentation/views/order_list_page_with_filters.dart';
 import 'features/promotions/presentation/views/create_promotion_page.dart';
 import 'features/promotions/presentation/views/promotion_detail_page.dart';
+import 'const/app_theme.dart';
+import 'features/settings/presentation/providers/settings_provider.dart';
 import 'features/settings/presentation/views/settings_page.dart';
 import 'home.dart';
 
@@ -212,6 +214,19 @@ class FastFoodApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final router = ref.watch(routerProvider);
+    final settingsState = ref.watch(settingsProvider);
+
+    ThemeMode themeMode;
+    switch (settingsState.settings.theme) {
+      case 'light':
+        themeMode = ThemeMode.light;
+        break;
+      case 'dark':
+        themeMode = ThemeMode.dark;
+        break;
+      default:
+        themeMode = ThemeMode.system;
+    }
 
     // Écouter les changements d'état d'authentification
     ref.listen<AuthState>(authProvider, (previous, next) {
@@ -245,11 +260,9 @@ class FastFoodApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'FastFood App',
-      theme: ThemeData(
-        fontFamily: 'Poppins',
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
     );

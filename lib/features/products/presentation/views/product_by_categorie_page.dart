@@ -214,6 +214,7 @@ class _ProductsByCategoryPageState
     final productState = ref.watch(
       productByCategorieNotifier(widget.categorieId),
     );
+    final colorScheme = Theme.of(context).colorScheme;
 
     // Responsive breakpoints
     final screenWidth = MediaQuery.of(context).size.width;
@@ -234,7 +235,7 @@ class _ProductsByCategoryPageState
       body: productState.isLoading
           ? Center(
         child: SpinKitThreeBounce(
-          color: Colors.orange,
+          color: colorScheme.primary,
           size: 30.0,
         ),
       )
@@ -261,6 +262,7 @@ class _ProductsByCategoryPageState
   // LISTE MOBILE
   // ---------------------------------------------------------
   Widget _buildMobileList(productState) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ListView.builder(
       padding: const EdgeInsets.all(10),
       itemCount: productState.products.length,
@@ -293,8 +295,8 @@ class _ProductsByCategoryPageState
                       if (loadingProgress == null) return child;
 
                       return Shimmer.fromColors(
-                        baseColor: Colors.grey.withOpacity(0.4),
-                        highlightColor: Colors.grey.withOpacity(0.1),
+                        baseColor: colorScheme.primary.withOpacity(0.1),
+                        highlightColor: colorScheme.primary.withOpacity(0.05),
                         child: Container(
                           width: 100,
                           height: 100,
@@ -306,8 +308,8 @@ class _ProductsByCategoryPageState
                       : Container(
                     width: 100,
                     height: 100,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.fastfood, size: 40),
+                    color: colorScheme.surfaceVariant,
+                    child: Icon(Icons.fastfood, size: 40, color: colorScheme.onSurfaceVariant),
                   ),
                 ),
 
@@ -323,9 +325,10 @@ class _ProductsByCategoryPageState
                         // NOM
                         Text(
                           product.nom,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -339,7 +342,7 @@ class _ProductsByCategoryPageState
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[700],
+                            color: colorScheme.onSurface.withOpacity(0.7),
                           ),
                         ),
 
@@ -349,9 +352,9 @@ class _ProductsByCategoryPageState
                         Chip(
                           label: Text(
                             "${product.prix.toStringAsFixed(2)} F CFA",
-                            style: const TextStyle(fontSize: 12),
+                            style: TextStyle(fontSize: 12, color: colorScheme.onSecondaryContainer),
                           ),
-                          backgroundColor: AppColors.chipPrice,
+                          backgroundColor: colorScheme.secondaryContainer,
                           visualDensity: VisualDensity.compact,
                         ),
                       ],
@@ -370,6 +373,7 @@ class _ProductsByCategoryPageState
   // GRID WEB / TABLETTE
   // ---------------------------------------------------------
   Widget _buildGrid(productState, bool isTablet) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GridView.builder(
       padding: const EdgeInsets.all(12),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -406,8 +410,8 @@ class _ProductsByCategoryPageState
                     if (loadingProgress == null) return child;
 
                     return Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
+                      baseColor: colorScheme.primary.withOpacity(0.1),
+                      highlightColor: colorScheme.primary.withOpacity(0.05),
                       child: Container(
                         height: 110,
                         width: double.infinity,
@@ -419,8 +423,8 @@ class _ProductsByCategoryPageState
                     : Container(
                   height: 110,
                   width: double.infinity,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.fastfood, size: 40),
+                  color: colorScheme.surfaceVariant,
+                  child: Icon(Icons.fastfood, size: 40, color: colorScheme.onSurfaceVariant),
                 ),
               ),
 
@@ -436,9 +440,10 @@ class _ProductsByCategoryPageState
                     Expanded(
                       child: Text(
                         product.nom,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -446,9 +451,9 @@ class _ProductsByCategoryPageState
                     Chip(
                       label: Text(
                         "${product.prix.toStringAsFixed(2)} F CFA",
-                        style: const TextStyle(fontSize: 12),
+                        style: TextStyle(fontSize: 12, color: colorScheme.onSecondaryContainer),
                       ),
-                      backgroundColor: AppColors.chipPrice,
+                      backgroundColor: colorScheme.secondaryContainer,
                       visualDensity: VisualDensity.compact,
                     ),
                   ],
@@ -464,7 +469,7 @@ class _ProductsByCategoryPageState
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[700],
+                    color: colorScheme.onSurface.withOpacity(0.7),
                   ),
                 ),
               ),

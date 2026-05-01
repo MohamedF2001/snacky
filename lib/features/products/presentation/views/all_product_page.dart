@@ -27,6 +27,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productListNotifier);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -218,7 +219,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
       ),
 
       body: productState.isLoading
-          ? SpinKitThreeBounce(color: AppColors.accentOrange, size: 30.0)
+          ? SpinKitThreeBounce(color: colorScheme.primary, size: 30.0)
 
           : productState.error != null
           ? Center(
@@ -236,8 +237,6 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
       ),
 
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppColors.accentOrange,
-        foregroundColor: Colors.black,
         onPressed: () => context.push('/products/create'),
         icon: const Icon(Icons.add),
         label: const Text("Nouveau produit"),
@@ -308,6 +307,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
     );
   }*/
   Widget _buildMobileList(productState) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ListView.builder(
       padding: const EdgeInsets.all(10),
       itemCount: productState.products.length,
@@ -342,8 +342,8 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                       if (loadingProgress == null) return child;
 
                       return Shimmer.fromColors(
-                        baseColor: Colors.grey.withOpacity(0.4),
-                        highlightColor: Colors.grey.withOpacity(0.1),
+                        baseColor: colorScheme.primary.withOpacity(0.1),
+                        highlightColor: colorScheme.primary.withOpacity(0.05),
                         child: Container(
                           width: 100,
                           height: 100,
@@ -355,8 +355,8 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                       : Container(
                     width: 100,
                     height: 100,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.fastfood, size: 40),
+                    color: colorScheme.surfaceVariant,
+                    child: Icon(Icons.fastfood, size: 40, color: colorScheme.onSurfaceVariant),
                   ),
                 ),
 
@@ -372,9 +372,10 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                         // NOM
                         Text(
                           product.nom,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -388,7 +389,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[700],
+                            color: colorScheme.onSurface.withOpacity(0.7),
                           ),
                         ),
 
@@ -398,9 +399,9 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                         Chip(
                           label: Text(
                             "${product.prix.toStringAsFixed(2)} F CFA",
-                            style: const TextStyle(fontSize: 12),
+                            style: TextStyle(fontSize: 12, color: colorScheme.onSecondaryContainer),
                           ),
-                          backgroundColor: AppColors.chipPrice,
+                          backgroundColor: colorScheme.secondaryContainer,
                           visualDensity: VisualDensity.compact,
                         ),
                       ],
@@ -417,6 +418,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
 
   // 🖥️ ------ GRID VIEW FOR TABLET/DESKTOP ------
   Widget _buildDesktopGrid(productState) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GridView.builder(
       padding: const EdgeInsets.all(12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -456,8 +458,8 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Shimmer.fromColors(
-                        baseColor: Colors.orange,
-                        highlightColor: Colors.orangeAccent,
+                        baseColor: colorScheme.primary.withOpacity(0.1),
+                        highlightColor: colorScheme.primary.withOpacity(0.05),
                         child: Container(
                           height: 110,
                           width: double.infinity,
@@ -469,8 +471,8 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                       : Container(
                     height: 80,
                     width: double.infinity,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.fastfood, size: 40),
+                    color: colorScheme.surfaceVariant,
+                    child: Icon(Icons.fastfood, size: 40, color: colorScheme.onSurfaceVariant),
                   ),
                 ),
                 Padding(
@@ -481,17 +483,17 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                       Expanded(
                         child: Text(
                           product.nom,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Chip(
                         label: Text(
                           "${product.prix.toStringAsFixed(2)} F",
-                          style: const TextStyle(fontSize: 12, color: Colors.black),
+                          style: TextStyle(fontSize: 12, color: colorScheme.onSecondaryContainer),
                         ),
-                        backgroundColor: AppColors.chipPrice,
+                        backgroundColor: colorScheme.secondaryContainer,
                       ),
                     ],
                   ),
@@ -504,7 +506,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey[700],
+                      color: colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                 ),

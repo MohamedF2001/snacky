@@ -770,49 +770,46 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
   Widget build(BuildContext context) {
     final productState = ref.watch(detailProductNotifier(widget.produitId));
     final deleteState = ref.watch(deleteProductProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Détails"),
+        title: const Text("Détails"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit, color: AppColors.darkBlue),
-            /*onPressed: demo
+            icon: Icon(Icons.edit, color: colorScheme.primary),
+            onPressed: ref.watch(demoProvider)
                 ? _showDemoDialog
-                : () => context.push('/products/edit/${widget.produitId}'),*/
-            onPressed: ref.watch(demoProvider) ?
-            _showDemoDialog : () => context.push('/products/edit/${widget.produitId}'),
+                : () => context.push('/products/edit/${widget.produitId}'),
           ),
           IconButton(
             icon: deleteState.isLoading
-                ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                color: Colors.orange,
-                strokeWidth: 2,
-              ),
-            )
-                : const Icon(Icons.delete, color: Colors.red),
-            onPressed:
-            deleteState.isLoading ? null : _showDeleteConfirmation,
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: colorScheme.primary,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Icon(Icons.delete, color: colorScheme.error),
+            onPressed: deleteState.isLoading ? null : _showDeleteConfirmation,
           ),
         ],
       ),
-
       body: deleteState.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: colorScheme.primary))
           : productState.isLoading
-          ? const Center(
-        child: SpinKitThreeBounce(
-          color: AppColors.accentOrange,
-          size: 30.0,
-        ),
-      )
-          : productState.error != null
-          ? Center(child: Text("Erreur : ${productState.error}"))
-          : _buildMobileLayout(productState),
+              ? Center(
+                  child: SpinKitThreeBounce(
+                    color: colorScheme.primary,
+                    size: 30.0,
+                  ),
+                )
+              : productState.error != null
+                  ? Center(child: Text("Erreur : ${productState.error}"))
+                  : _buildMobileLayout(productState),
     );
   }
 
@@ -881,6 +878,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
 
   Widget _buildProductInfoMobile(productState) {
     final product = productState.product;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       elevation: 0.5,
@@ -892,9 +890,10 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
           children: [
             Text(
               product.nom,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 12),
@@ -920,30 +919,38 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
     required String title,
     required String content,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.grey.shade100,
+        color: colorScheme.surfaceVariant.withOpacity(0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: Colors.blue),
+              Icon(icon, size: 18, color: colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 title,
-                style:
-                const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 6),
           Text(
             content,
-            style: const TextStyle(fontSize: 13, height: 1.4),
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.4,
+              color: colorScheme.onSurface.withOpacity(0.8),
+            ),
           ),
         ],
       ),
@@ -951,6 +958,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
   }
 
   Widget _buildPriceMobile(double prix) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -977,13 +985,14 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
   // ------------------------ ACTION BUTTONS MOBILE ----------------------------
 
   Widget _buildMobileButtons() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            label: const Text("Retour", style: TextStyle(color: Colors.black)),
+            icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+            label: Text("Retour", style: TextStyle(color: colorScheme.onSurface)),
             onPressed: () => context.go('/products'),
           ),
         ),
@@ -994,24 +1003,22 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
             icon: const Icon(Icons.edit),
             label: const Text("Modifier"),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.accentOrange,
-              foregroundColor: Colors.black,
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
             ),
-            /*onPressed: demo
+            onPressed: ref.watch(demoProvider)
                 ? _showDemoDialog
-                : () => context.push('/products/edit/${widget.produitId}'),*/
-              onPressed: ref.watch(demoProvider) ?
-              _showDemoDialog : () => context.push('/products/edit/${widget.produitId}'),
+                : () => context.push('/products/edit/${widget.produitId}'),
           ),
         ),
         const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            label: const Text(
+            icon: Icon(Icons.delete, color: colorScheme.error),
+            label: Text(
               "Supprimer",
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: colorScheme.error),
             ),
             onPressed: _showDeleteConfirmation,
           ),

@@ -584,22 +584,23 @@ class _HomeState extends ConsumerState<Home> {
     final categorieState = ref.watch(categorieListNotifier);
     final productState = ref.watch(productListNotifier);
     final popularProducts = productState.products.take(5).toList();
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: AppColors.neutralGrey100,
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'BIENVENUE',
           style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black),
+              fontSize: 20, fontWeight: FontWeight.w600, color: colorScheme.onSurface),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              icon: const Icon(Icons.notifications, color: AppColors.neutralBlack),
+              icon: Icon(Icons.notifications, color: colorScheme.onSurface),
               onPressed: () {},
               tooltip: 'Notifications',
             ),
@@ -641,7 +642,7 @@ class _HomeState extends ConsumerState<Home> {
                   onAdd: () => context.go('/products/create'),
                 ),
                 SizedBox(height: 10),
-                _buildPopularProducts(popularProducts),
+                _buildPopularProducts(popularProducts, colorScheme),
                 const SizedBox(height: 20),
               ],
             ),
@@ -732,7 +733,7 @@ class _HomeState extends ConsumerState<Home> {
     );
   }
 
-  Widget _buildPopularProducts(List products) {
+  Widget _buildPopularProducts(List products, ColorScheme colorScheme) {
     if (products.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
@@ -787,9 +788,9 @@ class _HomeState extends ConsumerState<Home> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(product.nom, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                          Text(product.nom, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
                           const SizedBox(height: 4),
-                          Text(product.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+                          Text(product.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, color: colorScheme.onSurface.withOpacity(0.7))),
                           const SizedBox(height: 8),
                           Chip(
                             label: Text("${product.prix.toStringAsFixed(2)} F CFA", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black)),
