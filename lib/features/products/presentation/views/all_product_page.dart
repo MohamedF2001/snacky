@@ -209,6 +209,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
   @override
   Widget build(BuildContext context) {
     final productState = ref.watch(productListNotifier);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
