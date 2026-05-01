@@ -55,7 +55,7 @@ class AboutSection extends StatelessWidget {
             ],
           ),
         ),
-        SettingsCard(
+        /*SettingsCard(
           title: 'Stack technique',
           icon: Icons.code,
           children: [
@@ -68,7 +68,7 @@ class AboutSection extends StatelessWidget {
             _InfoRow(label: 'Hébergement API', value: 'Vercel'),
             _InfoRow(label: 'Images', value: 'Cloudinary'),
           ],
-        ),
+        ),*/
         SettingsCard(
           title: 'Informations légales',
           icon: Icons.gavel_outlined,
