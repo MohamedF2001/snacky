@@ -41,29 +41,32 @@ class AdminMenuWidget extends ConsumerWidget {
       {"icon": Icons.settings, "label": "Paramètres", "route": "/settings"},
     ];
 
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: 220,
-      decoration: BoxDecoration(color: AppColors.neutralWhite),
+      decoration: BoxDecoration(color: colorScheme.surface),
       child: Column(
         children: [
           // --- Header utilisateur ---
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.white24)),
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: isDark ? Colors.white10 : Colors.black12)),
             ),
             child: Column(
               children: [
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.grey,
-                  child: Icon(Icons.person, size: 30, color: AppColors.neutralBlack),
+                  child: Icon(Icons.person, size: 30, color: isDark ? Colors.white : AppColors.neutralBlack),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   authState.user?.email ?? 'Admin',
-                  style: const TextStyle(
-                    color: AppColors.neutralBlack,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -73,7 +76,7 @@ class AdminMenuWidget extends ConsumerWidget {
                 Text(
                   authState.user?.role ?? 'Administrateur',
                   style: TextStyle(
-                    color: Colors.black.withOpacity(0.8),
+                    color: colorScheme.onSurface.withOpacity(0.8),
                     fontSize: 12,
                   ),
                 ),
@@ -121,8 +124,8 @@ class AdminMenuWidget extends ConsumerWidget {
                         Icon(
                           items[index]["icon"] as IconData,
                           color: active
-                              ? AppColors.neutralWhite
-                              : Colors.black,
+                              ? Colors.white
+                              : colorScheme.onSurface,
                         ),
                         const SizedBox(width: 12),
                         Text(
@@ -131,8 +134,8 @@ class AdminMenuWidget extends ConsumerWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: active
-                                ? AppColors.neutralWhite
-                                : Colors.black,
+                                ? Colors.white
+                                : colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -240,29 +243,31 @@ class AdminMenuWidget extends ConsumerWidget {
       {"icon": Icons.settings, "label": "Paramètres", "route": "/settings"},
     ];
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: 220,
-      decoration: BoxDecoration(color: AppColors.neutralWhite),
+      decoration: BoxDecoration(color: colorScheme.surface),
       child: Column(
         children: [
           // --- Header utilisateur ---
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.white24)),
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: colorScheme.onSurface.withOpacity(0.12))),
             ),
             child: Column(
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.grey,
-                  child: Icon(Icons.person, size: 30, color: AppColors.neutralBlack),
+                  backgroundColor: colorScheme.primaryContainer,
+                  child: Icon(Icons.person, size: 30, color: colorScheme.onPrimaryContainer),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   authState.user?.email ?? 'Admin',
-                  style: const TextStyle(
-                    color: AppColors.neutralBlack,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -272,7 +277,7 @@ class AdminMenuWidget extends ConsumerWidget {
                 Text(
                   authState.user?.role ?? 'Administrateur',
                   style: TextStyle(
-                    color: Colors.black.withOpacity(0.8),
+                    color: colorScheme.onSurface.withOpacity(0.8),
                     fontSize: 12,
                   ),
                 ),
@@ -309,7 +314,7 @@ class AdminMenuWidget extends ConsumerWidget {
                       horizontal: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: active ? AppColors.accentOrange : Colors.transparent,
+                      color: active ? colorScheme.primary : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: active
                           ? [
@@ -326,8 +331,8 @@ class AdminMenuWidget extends ConsumerWidget {
                         Icon(
                           items[index]["icon"] as IconData,
                           color: active
-                              ? AppColors.neutralWhite
-                              : Colors.black,
+                              ? colorScheme.onPrimary
+                              : colorScheme.onSurface,
                         ),
                         const SizedBox(width: 12),
                         Text(
@@ -336,8 +341,8 @@ class AdminMenuWidget extends ConsumerWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: active
-                                ? AppColors.neutralWhite
-                                : Colors.black,
+                                ? colorScheme.onPrimary
+                                : colorScheme.onSurface,
                           ),
                         ),
                       ],

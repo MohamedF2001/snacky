@@ -283,7 +283,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.appBackground,
       body: GestureDetector(
         onTap: () => _focusNode.unfocus(),
         child: Stack(
@@ -317,17 +317,20 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   // 🎨 Background avec dégradé et motifs subtils
   Widget _buildDecorativeBackground() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration:
       BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.orange.shade400, Colors.orangeAccent, Colors.orange.shade600],
+          colors: isDark
+            ? [Colors.grey.shade900, Colors.black, Colors.grey.shade800]
+            : [Colors.orange.shade400, Colors.orangeAccent, Colors.orange.shade600],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
       child: CustomPaint(
-        painter: FoodPatternPainter(),
+        painter: FoodPatternPainter(isDark: isDark),
         child: Container(),
       ),
     );
@@ -376,11 +379,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
       dynamic authState,
       dynamic authNotifier,
       ) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       constraints: BoxConstraints(maxWidth: 420),
       margin: EdgeInsets.symmetric(horizontal: size.width > 600 ? 24 : 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -442,6 +448,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   // 🍔 Header avec logo et titre
   Widget _buildHeader() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         // Logo animé
@@ -471,12 +480,12 @@ class _LoginPageState extends ConsumerState<LoginPage>
         const SizedBox(height: 20),
 
         // Titre principal
-        const Text(
+        Text(
           "Snacky Admin",
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: colorScheme.onSurface,
             letterSpacing: -0.5,
           ),
         ),
@@ -487,7 +496,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
           "Gérez votre fastfood en toute simplicité",
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey[600],
+            color: colorScheme.onSurface.withOpacity(0.7),
             height: 1.4,
           ),
           textAlign: TextAlign.center,
@@ -498,12 +507,15 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   // 📧 Champ Email stylisé
   Widget _buildEmailField() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
       controller: _emailController,
       focusNode: _focusNode,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
-      style: const TextStyle(fontSize: 16),
+      style: TextStyle(fontSize: 16, color: colorScheme.onSurface),
       decoration: AppInputStyles.textFieldDecoration(
         label: "Adresse email",
         //hint: "admin@snacky.com",
@@ -511,14 +523,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
       ).copyWith(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.accentOrange, width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade50,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -534,12 +546,15 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   // 🔐 Champ Mot de passe avec toggle visibility
   Widget _buildPasswordField() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
       controller: _passwordController,
       obscureText: _obscurePassword,
       textInputAction: TextInputAction.done,
       onFieldSubmitted: (_) => _focusNode.unfocus(),
-      style: const TextStyle(fontSize: 16),
+      style: TextStyle(fontSize: 16, color: colorScheme.onSurface),
       decoration: AppInputStyles.textFieldDecoration(
         label: "Mot de passe",
         //hint: "••••••••",
@@ -557,14 +572,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
       ).copyWith(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.accentOrange, width: 2),
         ),
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade50,
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -729,20 +744,22 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   // 👥 Footer avec branding
   Widget _buildFooter() {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
-        const Divider(height: 1, thickness: 1, color: Colors.grey),
+        Divider(height: 1, thickness: 1, color: colorScheme.onSurface.withOpacity(0.1)),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.security_rounded, size: 16, color: Colors.grey[500]),
+            Icon(Icons.security_rounded, size: 16, color: colorScheme.onSurface.withOpacity(0.5)),
             const SizedBox(width: 6),
             Text(
               "Connexion sécurisée • v1.0",
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[500],
+                color: colorScheme.onSurface.withOpacity(0.5),
               ),
             ),
           ],
@@ -752,7 +769,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
           "© 2026 Snacky. Tous droits réservés.",
           style: TextStyle(
             fontSize: 11,
-            color: Colors.grey[400],
+            color: colorScheme.onSurface.withOpacity(0.3),
           ),
         ),
       ],
@@ -786,10 +803,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
 // 🎨 Custom Painter pour motifs food en background
 class FoodPatternPainter extends CustomPainter {
+  final bool isDark;
+  FoodPatternPainter({this.isDark = false});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.08)
+      ..color = (isDark ? Colors.white : Colors.white).withOpacity(0.08)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 

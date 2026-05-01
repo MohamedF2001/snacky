@@ -36,10 +36,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
         elevation: 0,
         title: Row(
           children: [
@@ -48,19 +51,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
-                color: Colors.grey.shade500,
+                color: colorScheme.onSurface.withOpacity(0.5),
               ),
             ),
             Text(
               ' / ',
-              style: TextStyle(color: Colors.grey.shade300),
+              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.3)),
             ),
-            const Text(
+            Text(
               'Paramètres',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: colorScheme.onSurface,
               ),
             ),
           ],
@@ -80,12 +83,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   Widget _buildSidebar() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: 220,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         border: Border(
-          right: BorderSide(color: Colors.grey.shade200, width: 0.5),
+          right: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200, width: 0.5),
         ),
       ),
       child: Column(
@@ -102,6 +108,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   List<Widget> _buildSidebarItems() {
     final widgets = <Widget>[];
     String? lastGroup;
+    final colorScheme = Theme.of(context).colorScheme;
 
     for (int i = 0; i < _items.length; i++) {
       final item = _items[i];
@@ -132,11 +139,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: isActive ? Colors.orange.shade50 : Colors.transparent,
+              color: isActive ? colorScheme.primary.withOpacity(0.1) : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
               border: Border(
                 left: BorderSide(
-                  color: isActive ? Colors.orange : Colors.transparent,
+                  color: isActive ? colorScheme.primary : Colors.transparent,
                   width: 2,
                 ),
               ),
@@ -146,7 +153,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 Icon(
                   item.icon,
                   size: 18,
-                  color: isActive ? Colors.orange : Colors.grey.shade500,
+                  color: isActive ? colorScheme.primary : Colors.grey.shade500,
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -156,8 +163,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     fontWeight:
                     isActive ? FontWeight.w600 : FontWeight.w400,
                     color: isActive
-                        ? Colors.orange.shade800
-                        : Colors.grey.shade700,
+                        ? colorScheme.primary
+                        : colorScheme.onSurface.withOpacity(0.7),
                   ),
                 ),
               ],

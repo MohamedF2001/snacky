@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Dans app_colors.dart (suggestion)
-  static const primaryOrange = Color(0xFFFF6B35);  // Orange appétissant
-  static const secondaryRed = Color(0xFFE63946);   // Rouge dynamique
-  static const accentYellow = Color(0xFFFFD166);   // Jaune chaleureux
-  static const background = Color(0xFFF8F9FA);     // Fond neutre
   // ============ COULEURS PRINCIPALES ============
   static const Color primaryRed = Color(0xFFE63946);
+  static const Color primaryOrange = Color(0xFFFF6B35);
   static const Color secondaryBlue = Color(0xFF457B9D);
-  //static const Color accentOrange = Color(0xFFF4A261);
   static const Color accentOrange = Colors.orange;
   static const Color darkBlue = Color(0xFF1D3557);
   static const Color lightCream = Color(0xFFF1FAEE);
@@ -66,4 +61,11 @@ class AppColors {
   static const Color neutralGrey600 = Color(0xFF718096);
   static const Color neutralGrey800 = Color(0xFF2D3748);
   static const Color neutralBlack = Color(0xFF000000);
+
+  // ============ COULEURS DARK MODE (AJOUTS) ============
+  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkCard = Color(0xFF2C2C2C);
+  static const Color darkTextPrimary = Color(0xFFE1E1E1);
+  static const Color darkTextSecondary = Color(0xFFB0B0B0);
 }
