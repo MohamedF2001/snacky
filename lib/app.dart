@@ -12,7 +12,9 @@ import 'package:snacky/features/products/presentation/views/product_by_categorie
 import 'package:snacky/features/products/presentation/views/product_create_page.dart';
 import 'package:snacky/features/products/presentation/views/all_product_page.dart';
 import 'package:snacky/features/products/presentation/views/product_edit_page.dart';
+import 'package:snacky/features/onboarding/presentation/views/onboarding_page.dart';
 import 'package:snacky/features/promotions/presentation/views/all_promotion.dart';
+import 'package:snacky/features/splash/presentation/views/splash_page.dart';
 
 import 'features/orders/presentation/views/order_create_page.dart';
 import 'features/orders/presentation/views/order_detail_page.dart';
@@ -29,8 +31,18 @@ final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
     routes: [
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashPage(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        name: 'onboarding',
+        builder: (context, state) => const OnboardingPage(),
+      ),
       GoRoute(
         path: '/login',
         name: 'login',
@@ -199,6 +211,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isLoggedIn = authState.isAuthenticated;
       final isLoggingIn = state.matchedLocation == '/login';
+      final isSplash = state.matchedLocation == '/splash';
+      final isOnboarding = state.matchedLocation == '/onboarding';
+
+      if (isSplash || isOnboarding) return null;
 
       if (!isLoggedIn && !isLoggingIn) return '/login';
       if (isLoggedIn && isLoggingIn) return '/home';

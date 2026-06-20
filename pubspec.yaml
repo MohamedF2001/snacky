@@ -48,6 +48,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/logo.png
     - assets/images/categories/
     - assets/images/f1.png
     - assets/images/f2.png
