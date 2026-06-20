@@ -42,7 +42,8 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      //backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Colors.orangeAccent,
       body: Center(
         child: ScaleTransition(
           scale: _animation.drive(Tween(begin: 0.8, end: 1.2)),
@@ -59,7 +60,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                 'Snacky Admin',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Colors.black,
                     ),
               ),
             ],
