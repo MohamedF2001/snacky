@@ -42,30 +42,82 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Theme.of(context).colorScheme.surface,
-      backgroundColor: Colors.orangeAccent,
-      body: Center(
-        child: ScaleTransition(
-          scale: _animation.drive(Tween(begin: 0.8, end: 1.2)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/images/logo.png',
-                width: 200,
-                height: 200,
+      backgroundColor: const Color(0xFF000000), // Netflix-style black
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Background subtle gradient for depth
+          Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 1.2,
+                colors: [
+                  const Color(0xFFE50914).withOpacity(0.1),
+                  Colors.transparent,
+                ],
               ),
-              const SizedBox(height: 24),
-              Text(
-                'Snacky Admin',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-              ),
-            ],
+            ),
           ),
-        ),
+          Center(
+            child: ScaleTransition(
+              scale: _animation.drive(Tween(begin: 0.85, end: 1.0)),
+              child: FadeTransition(
+                opacity: _animation.drive(Tween(begin: 0.5, end: 1.0)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/images/logo.png',
+                      width: 180,
+                      height: 180,
+                    ),
+                    const SizedBox(height: 32),
+                    // Netflix-like red bar under logo (optional but fits theme)
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE50914),
+                        borderRadius: BorderRadius.circular(2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFE50914).withOpacity(0.5),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'SNACKY',
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 8.0,
+                        color: Colors.white,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Bottom loading indicator
+          Positioned(
+            bottom: 60,
+            child: SizedBox(
+              width: 150,
+              child: LinearProgressIndicator(
+                backgroundColor: Colors.white.withOpacity(0.1),
+                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFE50914)),
+                minHeight: 2,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
