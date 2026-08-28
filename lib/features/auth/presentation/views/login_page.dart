@@ -273,12 +273,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
     // Redirection après connexion réussie
     if (authState.isAuthenticated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final router = GoRouter.of(context);
-        if (router.canPop()) {
-          router.pop();
-        } else {
-          router.go('/home');
-        }
+        context.go('/home');
       });
     }
 

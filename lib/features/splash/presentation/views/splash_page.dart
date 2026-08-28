@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snacky/features/auth/presentation/providers/auth_provider.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  ConsumerState<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
+class _SplashPageState extends ConsumerState<SplashPage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -26,9 +28,41 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
       curve: Curves.easeInOut,
     );
 
-    Timer(const Duration(seconds: 5), () {
-      if (mounted) {
-        context.go('/onboarding');
+    _navigateToNext();
+  }
+
+  void _navigateToNext() {
+    Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      
+      final authState = ref.read(authProvider);
+      
+      // Si l'initialisation n'est pas finie, on attend un peu plus ou on écoute le changement
+      if (authState.isInitializing) {
+        // On vérifie à nouveau dans 500ms
+        _navigateToNextDelayed();
+      } else {
+        if (authState.isAuthenticated) {
+          context.go('/home');
+        } else {
+          context.go('/onboarding');
+        }
+      }
+    });
+  }
+
+  void _navigateToNextDelayed() {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final authState = ref.read(authProvider);
+      if (authState.isInitializing) {
+        _navigateToNextDelayed();
+      } else {
+        if (authState.isAuthenticated) {
+          context.go('/home');
+        } else {
+          context.go('/onboarding');
+        }
       }
     });
   }

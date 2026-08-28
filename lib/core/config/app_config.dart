@@ -1,10 +1,12 @@
 // core/config/app_config.dart
 
 class AppConfig {
-  //static const String baseUrl = 'https://snacky-api.vercel.app/api';
-  static String baseUrl =
-      'https://corsproxy.io/?${Uri.encodeFull('https://snacky-api.vercel.app/api')}';
+  // Version directe
+  static const String baseUrl = 'https://snacky-api.vercel.app/api';
+  
+  // Note: Si vous développez sur Web, utilisez la commande --disable-web-security 
+  // plutôt que des proxies qui cassent le Login (POST).
 
-  static const int connectTimeout = 30000; // Augmentez le timeout
+  static const int connectTimeout = 30000;
   static const int receiveTimeout = 30000;
 }

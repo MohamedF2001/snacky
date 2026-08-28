@@ -21,18 +21,7 @@ class OrderRemoteDataSource {
   /// Récupérer toutes les commandes
   Future<Either<Failure, List<OrderModel>>> getOrders() async {
     try {
-      final response = await apiClient.dio.get(
-        '/orders',
-        options: Options(
-          headers: {
-            'Cache-Control': 'no-cache', // ✅ Désactive le cache
-            'Pragma': 'no-cache',
-          },
-          extra: {
-            'cache': false, // ✅ Désactive le cache Dio
-          },
-        ),
-      );
+      final response = await apiClient.dio.get('/orders');
 
       logger.d("📥 Raw API response received, count: ${(response.data as List).length}");
 
