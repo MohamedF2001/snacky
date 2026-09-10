@@ -229,7 +229,7 @@ class _OrderListPageWithFiltersState extends ConsumerState<OrderListPageWithFilt
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
-                      orderState.error!.toString(),
+                      orderState.error!.userMessage,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey.shade600),
                     ),

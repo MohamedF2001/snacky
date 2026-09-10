@@ -240,7 +240,7 @@ class _ProductsByCategoryPageState
         ),
       )
           : productState.error != null
-          ? Center(child: Text('Erreur : ${productState.error}'))
+          ? Center(child: Text('Erreur : ${productState.error?.userMessage}'))
           : productState.products.isEmpty
           ? const Center(child: Text("Aucun produit disponible"))
 

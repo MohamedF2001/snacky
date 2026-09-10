@@ -224,7 +224,7 @@ class _AllProductsPageState extends ConsumerState<AllProductsPage> {
 
           : productState.error != null
           ? Center(
-        child: Text("Erreur : ${productState.error.toString()}"),
+        child: Text("Erreur : ${productState.error!.userMessage}"),
       )
 
           : LayoutBuilder(

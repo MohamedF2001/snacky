@@ -242,7 +242,7 @@ class _OrderEditPageState extends ConsumerState<OrderEditPage> {
       } else if (updateState.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur: ${updateState.error}'),
+            content: Text('Erreur: ${updateState.error?.userMessage}'),
             backgroundColor: Colors.red,
           ),
         );

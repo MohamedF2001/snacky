@@ -204,8 +204,8 @@ return unexpectedError();case _:
 /// @nodoc
 
 
-class ServerError implements Failure {
-  const ServerError({this.message});
+class ServerError extends Failure {
+  const ServerError({this.message}): super._();
   
 
  final  String? message;
@@ -270,8 +270,8 @@ as String?,
 /// @nodoc
 
 
-class NetworkError implements Failure {
-  const NetworkError();
+class NetworkError extends Failure {
+  const NetworkError(): super._();
   
 
 
@@ -302,8 +302,8 @@ String toString() {
 /// @nodoc
 
 
-class Unauthorized implements Failure {
-  const Unauthorized();
+class Unauthorized extends Failure {
+  const Unauthorized(): super._();
   
 
 
@@ -334,8 +334,8 @@ String toString() {
 /// @nodoc
 
 
-class NotFound implements Failure {
-  const NotFound();
+class NotFound extends Failure {
+  const NotFound(): super._();
   
 
 
@@ -366,8 +366,8 @@ String toString() {
 /// @nodoc
 
 
-class ValidationError implements Failure {
-  const ValidationError({required final  Map<String, dynamic> errors}): _errors = errors;
+class ValidationError extends Failure {
+  const ValidationError({required final  Map<String, dynamic> errors}): _errors = errors,super._();
   
 
  final  Map<String, dynamic> _errors;
@@ -438,8 +438,8 @@ as Map<String, dynamic>,
 /// @nodoc
 
 
-class UnexpectedError implements Failure {
-  const UnexpectedError();
+class UnexpectedError extends Failure {
+  const UnexpectedError(): super._();
   
 
 

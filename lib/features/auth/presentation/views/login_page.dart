@@ -785,14 +785,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   // 📝 Formatage des messages d'erreur
   String _getErrorMessage(Failure failure) {
-    return failure.when(
-      serverError: (message) => '🔧 ${message ?? "Erreur serveur"}',
-      networkError: () => '📡 Vérifiez votre connexion internet',
-      unauthorized: () => '🔑 Email ou mot de passe incorrect',
-      notFound: () => '❌ Compte introuvable',
-      validationError: (errors) => '⚠️ ${errors.values.join(", ")}',
-      unexpectedError: () => '😕 Une erreur est survenue',
-    );
+    return failure.userMessage;
   }
 }
 
