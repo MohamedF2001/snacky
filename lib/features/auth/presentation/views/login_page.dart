@@ -273,12 +273,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
     // Redirection après connexion réussie
     if (authState.isAuthenticated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final router = GoRouter.of(context);
-        if (router.canPop()) {
-          router.pop();
-        } else {
-          router.go('/home');
-        }
+        context.go('/home');
       });
     }
 
@@ -790,14 +785,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   // 📝 Formatage des messages d'erreur
   String _getErrorMessage(Failure failure) {
-    return failure.when(
-      serverError: (message) => '🔧 ${message ?? "Erreur serveur"}',
-      networkError: () => '📡 Vérifiez votre connexion internet',
-      unauthorized: () => '🔑 Email ou mot de passe incorrect',
-      notFound: () => '❌ Compte introuvable',
-      validationError: (errors) => '⚠️ ${errors.values.join(", ")}',
-      unexpectedError: () => '😕 Une erreur est survenue',
-    );
+    return failure.userMessage;
   }
 }
 

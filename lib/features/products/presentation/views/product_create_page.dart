@@ -207,7 +207,7 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.error?.toString() ?? "Erreur inconnue"),
+                  content: Text(state.error?.userMessage ?? "Erreur inconnue"),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -711,7 +711,7 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    "Erreur: ${categorieState.error}",
+                                    "Erreur: ${categorieState.error?.userMessage}",
                                     style: const TextStyle(color: Colors.red),
                                     textAlign: TextAlign.center,
                                   ),
@@ -1073,7 +1073,7 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.error?.toString() ?? "Erreur inconnue"),
+              content: Text(state.error?.userMessage ?? "Erreur inconnue"),
               backgroundColor: Colors.red,
             ),
           );
@@ -1221,7 +1221,7 @@ class _ProductCreatePageState extends ConsumerState<ProductCreatePage> {
             Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
             const SizedBox(height: 16),
             Text(
-              "Erreur: $error",
+              "Erreur",
               style: const TextStyle(color: Colors.red),
               textAlign: TextAlign.center,
             ),

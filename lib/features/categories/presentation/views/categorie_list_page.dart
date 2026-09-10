@@ -150,7 +150,7 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
       } else if (next.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Erreur : ${next.error}"),
+            content: Text("Erreur : ${next.error?.userMessage}"),
             backgroundColor: Colors.red,
           ),
         );
@@ -330,7 +330,7 @@ class _CategorieListPageState extends ConsumerState<CategorieListPage> {
             Icon(Icons.error_outline, color: Colors.red, size: isMobile ? 48 : 64),
             SizedBox(height: isMobile ? 12 : 16),
             Text(
-              "Erreur : ${state.error}",
+              "Erreur : ${state.error?.userMessage}",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.red, fontSize: isMobile ? 14 : 16),
             ),

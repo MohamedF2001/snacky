@@ -310,23 +310,36 @@ class _CategoryCreatePageState extends ConsumerState<CategoryCreatePage> {
 
       await createNotifier.createCategory(categorie);
 
-      // Refresh liste
-      await ref.read(categorieListNotifier.notifier).getCategories();
+      final createState = ref.read(createCategoryProvider);
 
       if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return SuccessDialog(
-              message: "Catégorie ajoutée avec succès !",
-              onOk: () {
-                Navigator.pop(context);
-                context.go('/categories');
+        if (createState.error == null) {
+          // Refresh liste
+          await ref.read(categorieListNotifier.notifier).getCategories();
+
+          if (mounted) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return SuccessDialog(
+                  message: "Catégorie ajoutée avec succès !",
+                  onOk: () {
+                    Navigator.pop(context);
+                    context.go('/categories');
+                  },
+                );
               },
             );
-          },
-        );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Erreur : ${createState.error?.userMessage}"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }

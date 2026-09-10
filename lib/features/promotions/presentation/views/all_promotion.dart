@@ -45,7 +45,7 @@ class _AllPromotionPageState extends ConsumerState<AllPromotionPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.red,
-              content: Text("Erreur : ${next.error.toString()}"),
+              content: Text("Erreur : ${next.error?.userMessage}"),
             ),
           );
 
@@ -197,7 +197,7 @@ class _AllPromotionPageState extends ConsumerState<AllPromotionPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Erreur : ${promotionState.error.toString()}",
+            "Erreur : ${promotionState.error?.userMessage}",
             style: const TextStyle(color: Colors.red),
           ),
           const SizedBox(height: 16),

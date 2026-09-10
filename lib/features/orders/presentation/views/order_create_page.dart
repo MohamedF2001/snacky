@@ -176,7 +176,7 @@ class _OrderCreatePageState extends ConsumerState<OrderCreatePage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(state.error?.toString() ?? "Erreur inconnue"),
+            content: Text(state.error?.userMessage ?? "Erreur inconnue"),
             backgroundColor: Colors.red,
           ),
         );

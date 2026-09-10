@@ -808,7 +808,7 @@ class _DetailsProductPageState extends ConsumerState<DetailsProductPage> {
                   ),
                 )
               : productState.error != null
-                  ? Center(child: Text("Erreur : ${productState.error}"))
+                  ? Center(child: Text("Erreur : ${productState.error?.userMessage}"))
                   : _buildMobileLayout(productState),
     );
   }

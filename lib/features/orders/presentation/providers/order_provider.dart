@@ -53,31 +53,39 @@ class OrderListNotifier extends StateNotifier<OrderListState> {
       : super(OrderListState());
 
   Future<void> getOrders({bool loadMore = false}) async {
+    // Si déjà en cours, on ignore
     if (state.isLoading) return;
 
     final nextPage = loadMore ? state.page + 1 : 1;
 
     state = state.copyWith(isLoading: true, error: null, page: nextPage);
 
-    final result = await getOrdersUseCase.execute();
+    try {
+      final result = await getOrdersUseCase.execute();
 
-    result.fold(
-          (failure) {
-        state = state.copyWith(
-          isLoading: false,
-          error: failure,
-          page: loadMore ? state.page : 1,
-        );
-      },
-          (orders) {
-        state = state.copyWith(
-          isLoading: false,
-          orders: loadMore ? [...state.orders, ...orders] : orders,
-          hasReachedMax: orders.length < 20,
-          error: null,
-        );
-      },
-    );
+      result.fold(
+            (failure) {
+          state = state.copyWith(
+            isLoading: false,
+            error: failure,
+            page: loadMore ? state.page : 1,
+          );
+        },
+            (orders) {
+          state = state.copyWith(
+            isLoading: false,
+            orders: loadMore ? [...state.orders, ...orders] : orders,
+            hasReachedMax: orders.length < 20,
+            error: null,
+          );
+        },
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: Failure.unexpectedError(),
+      );
+    }
   }
 
   // ✅ Nouvelle méthode pour mettre à jour une commande dans la liste
@@ -333,7 +341,7 @@ StateNotifierProvider<OrderListNotifier, OrderListState>((ref) {
         remoteDataSource: OrderRemoteDataSource(apiClient: ApiClient()),
       ),
     ),
-  )..getOrders();
+  );
 });
 
 // Provider pour les commandes d'un client

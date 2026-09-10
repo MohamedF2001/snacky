@@ -687,7 +687,7 @@ class _HomeState extends ConsumerState<Home> {
     }
 
     if (categorieState.error != null && categorieState.categories.isEmpty) {
-      return _buildErrorWidget(categorieState.error.toString(), () {
+      return _buildErrorWidget(categorieState.error!.userMessage, () {
         ref.read(categorieListNotifier.notifier).getCategories();
       });
     }

@@ -12,7 +12,9 @@ import 'package:snacky/features/products/presentation/views/product_by_categorie
 import 'package:snacky/features/products/presentation/views/product_create_page.dart';
 import 'package:snacky/features/products/presentation/views/all_product_page.dart';
 import 'package:snacky/features/products/presentation/views/product_edit_page.dart';
+import 'package:snacky/features/onboarding/presentation/views/onboarding_page.dart';
 import 'package:snacky/features/promotions/presentation/views/all_promotion.dart';
+import 'package:snacky/features/splash/presentation/views/splash_page.dart';
 
 import 'features/orders/presentation/views/order_create_page.dart';
 import 'features/orders/presentation/views/order_detail_page.dart';
@@ -26,11 +28,29 @@ import 'features/settings/presentation/views/settings_page.dart';
 import 'home.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
-
+  // On ne "watch" pas ici pour éviter de recréer le router à chaque changement d'auth
+  // On utilise plutôt une redirection basée sur l'état actuel
+  
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
+    // Permet de rafraîchir le router quand l'état d'authentification change
+    refreshListenable: _AuthListenable(ref),
     routes: [
+      // Ajout d'une route racine par défaut pour éviter l'erreur de route initiale
+      GoRoute(
+        path: '/',
+        redirect: (_, __) => '/splash',
+      ),
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashPage(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        name: 'onboarding',
+        builder: (context, state) => const OnboardingPage(),
+      ),
       GoRoute(
         path: '/login',
         name: 'login',
@@ -41,7 +61,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         builder: (context, state, child) {
           return AdminHomePage(child: child);
-          // AdminHomePage contient ton Scaffold + Menu
         },
         routes: [
           GoRoute(
@@ -53,24 +72,6 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/admin',
             name: 'dashboard',
             builder: (context, state) => DashboardPage(),
-            /*Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.dashboard, size: 64, color: Colors.blue),
-                  SizedBox(height: 16),
-                  Text(
-                    'Tableau de Bord',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Bienvenue dans l\'administration Snacky Admin ',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),*/
           ),
           GoRoute(
             path: '/categories',
@@ -100,28 +101,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               return ProductEditPage(productId: productId);
             },
           ),
-          /*GoRoute(
-            path: '/settings',
-            name: 'settings',
-            builder: (context, state) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.settings, size: 64, color: Colors.blue),
-                  SizedBox(height: 16),
-                  Text(
-                    'Paramètres',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Configurez vos préférences',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-          ),*/
           GoRoute(
             path: '/settings',
             name: 'settings',
@@ -170,7 +149,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               return PromotionDetailPage(promotionId: promotionId);
             },
           ),
-          // Détails d'une commande
           GoRoute(
             path: '/orders/detail/:id',
             builder: (context, state) {
@@ -178,7 +156,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               return OrderDetailPageEnhanced(orderId: orderId);
             },
           ),
-          // Modification d'une commande
           GoRoute(
             path: '/orders/edit/:id',
             builder: (context, state) {
@@ -186,7 +163,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               return OrderEditPage(orderId: orderId);
             },
           ),
-          // Création d'une commande (si pas déjà fait)
           GoRoute(
             path: '/orders/create',
             builder: (context, state) => const OrderCreatePage(),
@@ -197,15 +173,28 @@ final routerProvider = Provider<GoRouter>((ref) {
 
     // 🔒 Auth guard
     redirect: (context, state) {
+      final authState = ref.read(authProvider);
       final isLoggedIn = authState.isAuthenticated;
       final isLoggingIn = state.matchedLocation == '/login';
+      final isSplash = state.matchedLocation == '/splash';
+      final isOnboarding = state.matchedLocation == '/onboarding';
+
+      if (isSplash || isOnboarding) return null;
 
       if (!isLoggedIn && !isLoggingIn) return '/login';
       if (isLoggedIn && isLoggingIn) return '/home';
+
       return null;
     },
   );
 });
+
+// Classe utilitaire pour écouter le provider dans GoRouter
+class _AuthListenable extends ChangeNotifier {
+  _AuthListenable(Ref ref) {
+    ref.listen(authProvider, (_, __) => notifyListeners());
+  }
+}
 
 class FastFoodApp extends ConsumerWidget {
   const FastFoodApp({super.key});
@@ -233,30 +222,10 @@ class FastFoodApp extends ConsumerWidget {
       if (previous?.isAuthenticated == true && !next.isAuthenticated) {
         print('🔄 User logged out, navigating to login');
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          GoRouter.of(context).go('/login');
+          router.go('/login');
         });
       }
     });
-
-    if (authState.isInitializing) {
-      return MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 16),
-                Text(
-                  'Initialisation...',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
 
     return MaterialApp.router(
       title: 'FastFood App',
